@@ -1,24 +1,47 @@
 {
-  "name": "sql-analyzer",
-  "private": true,
+  "name": "huawei-plan-visualizer",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
+  "packageManager": "bun@1.3.8",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri"
+    "dev": "bunx --bun vite",
+    "build": "bunx --bun vue-tsc --noEmit && bunx --bun vite build",
+    "preview": "bunx --bun vite preview",
+    "lint": "bunx --bun eslint .",
+    "test": "bunx --bun vitest run",
+    "typecheck": "bunx --bun vue-tsc --noEmit",
+    "tauri:dev": "bunx --bun tauri dev",
+    "tauri:build": "bunx --bun tauri build"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.0.2",
+    "@tauri-apps/plugin-opener": "^2.0.0",
+    "@vueuse/core": "^11.1.0",
+    "d3-hierarchy": "^3.1.2",
+    "d3-scale": "^4.0.2",
+    "pinia": "^2.1.7",
+    "uuid": "^11.0.3",
     "vue": "^3.5.13",
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2"
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.4.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "@types/d3-hierarchy": "^2.0.5",
+    "@types/node": "^22.10.1",
     "@vitejs/plugin-vue": "^5.2.1",
-    "typescript": "~5.6.2",
+    "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-plugin-vue": "^9.29.1",
+    "postcss": "^8.4.49",
+    "sass": "^1.81.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.6.3",
     "vite": "^6.0.3",
-    "vue-tsc": "^2.1.10",
-    "@tauri-apps/cli": "^2"
+    "vitest": "^2.1.4",
+    "vue-tsc": "^2.1.10"
   }
 }
