@@ -12,7 +12,7 @@ const planStore = usePlanStore();
 
 const nodes = computed(() => planStore.nodes);
 const insights = computed(() => planStore.insights);
-const history = computed(() => planStore.history);
+const history = computed(() => planStore.historySummaries);
 const current = computed(() => planStore.currentExecution);
 </script>
 
@@ -21,7 +21,7 @@ const current = computed(() => planStore.currentExecution);
     <PlanToolbar class="toolbar" />
     <section class="workspace-body">
       <aside class="workspace-panel history glass-panel">
-        <PlanHistoryPanel :history="history" />
+        <PlanHistoryPanel :history="history" @select="planStore.loadFromHistory" />
       </aside>
       <div class="workspace-main glass-panel">
         <div class="plan-meta" v-if="current">

@@ -8,6 +8,14 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const emit = defineEmits<{
+  (e: "select", id: string): void;
+}>();
+
+function select(id: string) {
+  emit("select", id);
+}
 </script>
 
 <template>
@@ -17,7 +25,12 @@ const props = defineProps({
       <span class="tag">{{ props.history.length }} stored</span>
     </header>
     <div class="history-list scroll-y">
-      <article v-for="entry in props.history" :key="entry.id" class="history-card">
+      <article
+        v-for="entry in props.history"
+        :key="entry.id"
+        class="history-card"
+        @click="select(entry.id)"
+      >
         <p class="history-title">{{ entry.title }}</p>
         <p class="history-meta">
           {{ entry.dialect.toUpperCase() }} ·
@@ -55,6 +68,12 @@ header {
   border-radius: 12px;
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.history-card:hover {
+  border-color: var(--accent-1);
 }
 
 .history-title {

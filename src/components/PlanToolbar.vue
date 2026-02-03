@@ -2,17 +2,14 @@
 import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
 import { usePlanStore } from "@/stores/planStore";
+import PlanImportModal from "@/components/PlanImportModal.vue";
 
 const { t } = useI18n();
 const planStore = usePlanStore();
 const palette = ref("default");
+const openImport = ref(false);
 
 const summary = computed(() => planStore.currentExecution?.summary);
-
-function fakeImport() {
-  // placeholder for future import modal
-  alert("Import flow coming soon. For now we show mock data.");
-}
 
 function fakeExplain() {
   alert("Database EXPLAIN execution will be wired to Tauri soon.");
@@ -34,9 +31,10 @@ function cyclePalette() {
     </div>
     <div class="actions">
       <button class="ghost" @click="cyclePalette">Palette: {{ palette }}</button>
-      <button class="ghost" @click="fakeImport">{{ t("app.importPlan") }}</button>
+      <button class="ghost" @click="openImport = true">{{ t("app.importPlan") }}</button>
       <button class="glow" @click="fakeExplain">{{ t("app.runExplain") }}</button>
     </div>
+    <PlanImportModal :open="openImport" @close="openImport = false" />
   </div>
 </template>
 
