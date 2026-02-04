@@ -4,6 +4,7 @@ import PlanGraph from "@/components/PlanGraph.vue";
 import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
+import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -13,6 +14,7 @@ const { t } = useI18n();
 
 const nodes = computed(() => planStore.nodes);
 const insights = computed(() => planStore.insights);
+const focusedNode = computed(() => planStore.focusedNode);
 const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
   { id: "sql", label: t("plan.tabs.sql") },
@@ -90,6 +92,9 @@ onMounted(() => {
           </section>
         </div>
       </div>
+      <aside class="detail-panel glass-panel">
+        <PlanNodeDetails :node="focusedNode" />
+      </aside>
     </section>
   </div>
 </template>
@@ -102,9 +107,11 @@ onMounted(() => {
 }
 
 .workspace-body {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1.5rem;
   min-height: 70vh;
+  align-items: start;
 }
 
 .workspace-main {
@@ -225,9 +232,20 @@ onMounted(() => {
   flex-direction: column;
 }
 
+.detail-panel {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 @media (max-width: 1200px) {
   .workspace-body {
+    grid-template-columns: minmax(0, 1fr);
     min-height: auto;
+  }
+  .detail-panel {
+    order: 3;
   }
 }
 </style>

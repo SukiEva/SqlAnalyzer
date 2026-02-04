@@ -150,15 +150,23 @@ function linkPath(link: { source: LayoutNode; target: LayoutNode }) {
 function handleHover(node: LayoutNode, event: MouseEvent) {
   planStore.highlightNode(node.id);
   if (!node.node.docKey) return;
+  const target = event.currentTarget as SVGGElement | null;
+  const rect = target?.getBoundingClientRect();
+  if (!rect) return;
   planStore.showDocTooltip(node.node.docKey, {
-    x: event.clientX + 16,
-    y: event.clientY + window.scrollY - 10,
+    x: rect.right + 12,
+    y: rect.top + window.scrollY,
   });
 }
 
 function handleLeave() {
   planStore.highlightNode(null);
   planStore.scheduleDocTooltipHide();
+}
+
+function handleSelect(node: LayoutNode) {
+  planStore.focusNode(node.id);
+  planStore.highlightNode(node.id);
 }
 
 function handleWheel(event: WheelEvent) {
@@ -232,6 +240,8 @@ onBeforeUnmount(() => {
               :transform="`translate(${node.y - 120}, ${node.x - 45})`"
               @mouseenter="handleHover(node, $event as MouseEvent)"
               @mouseleave="handleLeave"
+              @pointerdown.stop
+              @click="handleSelect(node)"
             >
               <rect :fill="runtimeColor(node.runtimeRatio)" />
               <text class="label">{{ node.name }}</text>

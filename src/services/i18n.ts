@@ -62,6 +62,14 @@ const messages = {
         slow: "Slow",
         hot: "Hot",
       },
+      details: {
+        title: "Node details",
+        empty: "Select a node from the tree or canvas to inspect metrics.",
+        attributes: "Attributes",
+        warnings: "Warnings",
+        docLink: "Open documentation",
+        unknown: "N/A",
+      },
     },
     history: {
       hero: {
@@ -169,6 +177,14 @@ const messages = {
         reset: "重置视角",
         slow: "低耗时",
         hot: "热点",
+      },
+      details: {
+        title: "节点详情",
+        empty: "从树或画布中选择节点以查看指标",
+        attributes: "关键属性",
+        warnings: "告警信息",
+        docLink: "查看节点文档",
+        unknown: "未知",
       },
     },
     history: {

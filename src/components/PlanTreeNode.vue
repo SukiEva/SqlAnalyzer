@@ -32,6 +32,7 @@ watch(
 );
 
 const isHighlighted = computed(() => props.highlighted === props.node.id);
+const isFocused = computed(() => store.focusedNodeId === props.node.id);
 
 const ratio = computed(() => {
   if (!props.node.metrics.estimatedRows) return 1;
@@ -44,6 +45,7 @@ function toggleCollapse() {
 
 function selectNode() {
   store.highlightNode(props.node.id);
+  store.focusNode(props.node.id);
 }
 
 function handleHover(event: MouseEvent) {
@@ -63,7 +65,7 @@ function handleLeave() {
   <div class="tree-node" :data-level="node.level">
     <div
       class="node-head"
-      :class="{ highlighted: isHighlighted, warn: ratio > 1.5, critical: ratio > 2.5 }"
+      :class="{ highlighted: isHighlighted || isFocused, warn: ratio > 1.5, critical: ratio > 2.5 }"
       @mouseenter="handleHover"
       @mouseleave="handleLeave"
       @click="selectNode"
