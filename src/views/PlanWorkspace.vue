@@ -14,12 +14,12 @@ const nodes = computed(() => planStore.nodes);
 const insights = computed(() => planStore.insights);
 const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
-  { id: "plan", label: t("plan.tabs.structure") },
   { id: "sql", label: t("plan.tabs.sql") },
+  { id: "plan", label: t("plan.tabs.structure") },
   { id: "timeline", label: t("plan.tabs.timeline") },
-  { id: "meta", label: t("plan.tabs.metrics") },
+  { id: "insights", label: t("plan.tabs.insights") },
 ]);
-const activeTab = ref("plan");
+const activeTab = ref("sql");
 
 onMounted(() => {
   planStore.bootstrap();
@@ -68,9 +68,6 @@ onMounted(() => {
           </button>
         </div>
         <div class="tab-panels">
-          <section v-show="activeTab === 'plan'" class="plan-pane">
-            <PlanTree :nodes="nodes" />
-          </section>
           <section v-show="activeTab === 'sql'" class="sql-pane">
             <div class="sql-block">
               <div class="sql-block__header">
@@ -81,40 +78,17 @@ onMounted(() => {
               <p v-else class="empty-state">{{ t("plan.sql.empty") }}</p>
             </div>
           </section>
+          <section v-show="activeTab === 'plan'" class="plan-pane">
+            <PlanTree :nodes="nodes" />
+          </section>
           <section v-show="activeTab === 'timeline'" class="timeline-pane">
             <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
           </section>
-          <section v-show="activeTab === 'meta'" class="meta-pane">
-            <div class="meta-cards">
-              <article>
-                <h4>{{ t("plan.stats.nodes") }}</h4>
-                <p>{{ current?.stats.nodeCount ?? 0 }}</p>
-              </article>
-              <article>
-                <h4>{{ t("plan.stats.runtime") }}</h4>
-                <p>{{ current?.stats.totalTimeMs ?? 0 }} ms</p>
-              </article>
-              <article>
-                <h4>{{ t("plan.stats.memory") }}</h4>
-                <p>{{ current?.stats.totalMemoryMB ?? 0 }} MB</p>
-              </article>
-              <article>
-                <h4>{{ t("plan.meta.sourceLabel") }}</h4>
-                <p>
-                  {{
-                    current?.summary.source === "upload"
-                      ? t("plan.meta.sourceUpload")
-                      : t("plan.meta.sourceConnection")
-                  }}
-                </p>
-              </article>
-            </div>
+          <section v-show="activeTab === 'insights'" class="insights-pane">
+            <PlanInsightPanel :insights="insights" />
           </section>
         </div>
       </div>
-      <aside class="workspace-panel insights glass-panel">
-        <PlanInsightPanel :insights="insights" />
-      </aside>
     </section>
   </div>
 </template>
@@ -127,17 +101,9 @@ onMounted(() => {
 }
 
 .workspace-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 2rem;
-  min-height: 70vh;
-}
-
-.workspace-panel {
-  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  min-height: 70vh;
 }
 
 .workspace-main {
@@ -242,7 +208,7 @@ onMounted(() => {
 .plan-pane,
 .sql-pane,
 .timeline-pane,
-.meta-pane {
+.insights-pane {
   border: 1px solid var(--border);
   border-radius: 18px;
   background: radial-gradient(
@@ -275,48 +241,15 @@ onMounted(() => {
   height: 100%;
 }
 
-.meta-pane {
+.insights-pane {
+  min-height: 320px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.meta-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  width: 100%;
-}
-
-.meta-cards article {
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.meta-cards h4 {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.meta-cards p {
-  margin: 0.35rem 0 0;
-  font-size: 1.1rem;
-  font-family: "JetBrains Mono", monospace;
-}
-
-.history-pane {
-  min-height: 420px;
+  flex-direction: column;
 }
 
 @media (max-width: 1200px) {
   .workspace-body {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .workspace-panel.insights {
-    order: 2;
+    min-height: auto;
   }
 }
 </style>

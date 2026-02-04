@@ -25,10 +25,10 @@ const messages = {
     plan: {
       emptyState: "Import a plan to begin.",
       tabs: {
-        structure: "Plan Tree",
         sql: "SQL Context",
+        structure: "Plan Tree",
         timeline: "Timeline",
-        metrics: "Metrics",
+        insights: "Insights",
       },
       stats: {
         nodes: "Nodes",
@@ -125,10 +125,10 @@ const messages = {
     plan: {
       emptyState: "导入执行计划以开始分析",
       tabs: {
-        structure: "执行计划",
         sql: "SQL 上下文",
+        structure: "执行计划",
         timeline: "时间线",
-        metrics: "指标概览",
+        insights: "洞察",
       },
       stats: {
         nodes: "节点数",
