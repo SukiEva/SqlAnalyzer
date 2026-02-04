@@ -6,6 +6,7 @@ export interface ParseOptions {
   title?: string;
   source?: "upload" | "connection";
   capturedAt?: string;
+  sqlText?: string;
 }
 
 interface JsonPlanNode {
@@ -274,6 +275,7 @@ function finalizeExecution(nodes: PlanNode[], dialect: PlanDialect, options: Par
       sqlFingerprint: `${summaryTitle}-${summaryId.slice(0, 8)}`,
       title: summaryTitle,
       tags: [],
+      sqlText: options.sqlText,
     },
     nodes,
     stats: {

@@ -12,6 +12,11 @@ export const mockPlan: PlanExecution = {
     sqlFingerprint: "select-orders-v1",
     title: "Order aggregation demo",
     tags: ["demo", "orders"],
+    sqlText: `SELECT c.region, COUNT(*) AS orders
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+WHERE o.status = 'completed'
+GROUP BY c.region;`,
   },
   stats: {
     totalTimeMs: 1234,

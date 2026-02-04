@@ -30,6 +30,7 @@ export interface PlanSummary {
   sqlFingerprint: string;
   title: string;
   tags?: string[];
+  sqlText?: string;
 }
 
 export interface PlanExecution {

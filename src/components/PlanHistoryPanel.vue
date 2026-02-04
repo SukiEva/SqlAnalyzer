@@ -39,6 +39,9 @@ function remove(id: string) {
           {{ entry.dialect.toUpperCase() }} ·
           {{ new Date(entry.capturedAt).toLocaleString() }}
         </p>
+        <p v-if="entry.sqlText" class="history-sql">
+          {{ entry.sqlText.slice(0, 60) }}<span v-if="entry.sqlText.length > 60">…</span>
+        </p>
         <p class="tags" v-if="entry.tags?.length">
           <span v-for="tag in entry.tags" :key="tag" class="tag">{{ tag }}</span>
         </p>
@@ -112,6 +115,13 @@ header {
   margin: 0.25rem 0 0;
   font-size: 0.75rem;
   color: var(--text-secondary);
+}
+
+.history-sql {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-family: "JetBrains Mono", monospace;
 }
 
 .empty {

@@ -10,6 +10,7 @@ const emit = defineEmits<{ (e: "close"): void }>();
 const planStore = usePlanStore();
 const dialect = ref<PlanDialect>("opengauss");
 const title = ref("Manual import");
+const sqlText = ref("");
 const payload = ref("");
 const error = ref<string | null>(null);
 
@@ -19,6 +20,7 @@ watch(
     if (!isOpen) {
       payload.value = "";
       error.value = null;
+      sqlText.value = "";
     }
   },
 );
@@ -33,6 +35,7 @@ async function submit() {
       dialectHint: dialect.value,
       title: title.value,
       source: "upload",
+      sqlText: sqlText.value.trim() ? sqlText.value : undefined,
     });
     await planStore.ingestPlan(plan);
     close();
@@ -53,6 +56,10 @@ async function submit() {
         <label class="field">
           <span>Title</span>
           <input v-model="title" type="text" />
+        </label>
+        <label class="field">
+          <span>SQL (可选)</span>
+          <textarea v-model="sqlText" rows="4" placeholder="粘贴原始 SQL，便于历史分析"></textarea>
         </label>
         <label class="field">
           <span>Dialect</span>
