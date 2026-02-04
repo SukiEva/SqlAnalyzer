@@ -17,15 +17,11 @@ const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
   { id: "sql", label: t("plan.tabs.sql") },
   { id: "plan", label: t("plan.tabs.structure") },
+  { id: "canvas", label: t("plan.tabs.canvas") },
   { id: "timeline", label: t("plan.tabs.timeline") },
   { id: "insights", label: t("plan.tabs.insights") },
 ]);
 const activeTab = ref("sql");
-const planView = ref<"tree" | "graph">("tree");
-const planViews = computed(() => [
-  { id: "tree", label: t("plan.views.tree") },
-  { id: "graph", label: t("plan.views.graph") },
-]);
 
 onMounted(() => {
   planStore.bootstrap();
@@ -81,22 +77,10 @@ onMounted(() => {
             </div>
           </section>
           <section v-show="activeTab === 'plan'" class="plan-pane">
-            <div class="plan-pane-toolbar">
-              <div class="segmented">
-                <button
-                  v-for="view in planViews"
-                  :key="view.id"
-                  :class="{ active: planView === view.id }"
-                  @click="planView = view.id as 'tree' | 'graph'"
-                >
-                  {{ view.label }}
-                </button>
-              </div>
-            </div>
-            <div class="plan-pane-body">
-              <PlanTree v-if="planView === 'tree'" :nodes="nodes" />
-              <PlanGraph v-else :nodes="nodes" />
-            </div>
+            <PlanTree :nodes="nodes" />
+          </section>
+          <section v-show="activeTab === 'canvas'" class="canvas-pane">
+            <PlanGraph :nodes="nodes" />
           </section>
           <section v-show="activeTab === 'timeline'" class="timeline-pane">
             <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
@@ -211,15 +195,18 @@ onMounted(() => {
 
 .plan-pane,
 .sql-pane,
+.canvas-pane,
 .timeline-pane,
 .insights-pane {
   padding: 0;
 }
 
-.plan-pane {
+.plan-pane,
+.canvas-pane,
+.timeline-pane,
+.insights-pane {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   min-height: 420px;
 }
 
@@ -228,15 +215,8 @@ onMounted(() => {
   min-height: 320px;
 }
 
-.sql-pane,
-.timeline-pane,
-.insights-pane {
-  display: flex;
-  flex-direction: column;
-}
-
-.insights-pane {
-  min-height: 320px;
+.canvas-pane {
+  min-height: 480px;
 }
 
 .timeline-pane :deep(.timeline) {
@@ -251,38 +231,3 @@ onMounted(() => {
   }
 }
 </style>
-.plan-pane-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.plan-pane-body {
-  flex: 1;
-  display: flex;
-  min-height: 320px;
-}
-
-.segmented {
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  display: inline-flex;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 2px;
-  gap: 0.15rem;
-}
-
-.segmented button {
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  padding: 0.25rem 0.9rem;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.segmented button.active {
-  background: var(--accent-1);
-  color: #050914;
-}

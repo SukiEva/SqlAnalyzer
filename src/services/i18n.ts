@@ -27,12 +27,9 @@ const messages = {
       tabs: {
         sql: "SQL Context",
         structure: "Plan Tree",
+        canvas: "Canvas",
         timeline: "Timeline",
         insights: "Insights",
-      },
-      views: {
-        tree: "Hierarchy",
-        graph: "Canvas",
       },
       stats: {
         nodes: "Nodes",
@@ -138,12 +135,9 @@ const messages = {
       tabs: {
         sql: "SQL 上下文",
         structure: "执行计划",
+        canvas: "可视化画布",
         timeline: "时间线",
         insights: "洞察",
-      },
-      views: {
-        tree: "层级视图",
-        graph: "可视化画布",
       },
       stats: {
         nodes: "节点数",
