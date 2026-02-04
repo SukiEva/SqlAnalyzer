@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PlanTree from "@/components/PlanTree.vue";
+import PlanGraph from "@/components/PlanGraph.vue";
 import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
@@ -20,6 +21,11 @@ const tabs = computed(() => [
   { id: "insights", label: t("plan.tabs.insights") },
 ]);
 const activeTab = ref("sql");
+const planView = ref<"tree" | "graph">("tree");
+const planViews = computed(() => [
+  { id: "tree", label: t("plan.views.tree") },
+  { id: "graph", label: t("plan.views.graph") },
+]);
 
 onMounted(() => {
   planStore.bootstrap();
@@ -75,7 +81,22 @@ onMounted(() => {
             </div>
           </section>
           <section v-show="activeTab === 'plan'" class="plan-pane">
-            <PlanTree :nodes="nodes" />
+            <div class="plan-pane-toolbar">
+              <div class="segmented">
+                <button
+                  v-for="view in planViews"
+                  :key="view.id"
+                  :class="{ active: planView === view.id }"
+                  @click="planView = view.id as 'tree' | 'graph'"
+                >
+                  {{ view.label }}
+                </button>
+              </div>
+            </div>
+            <div class="plan-pane-body">
+              <PlanTree v-if="planView === 'tree'" :nodes="nodes" />
+              <PlanGraph v-else :nodes="nodes" />
+            </div>
           </section>
           <section v-show="activeTab === 'timeline'" class="timeline-pane">
             <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
@@ -230,3 +251,38 @@ onMounted(() => {
   }
 }
 </style>
+.plan-pane-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plan-pane-body {
+  flex: 1;
+  display: flex;
+  min-height: 320px;
+}
+
+.segmented {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px;
+  gap: 0.15rem;
+}
+
+.segmented button {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.segmented button.active {
+  background: var(--accent-1);
+  color: #050914;
+}

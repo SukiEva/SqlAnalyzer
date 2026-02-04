@@ -30,6 +30,10 @@ const messages = {
         timeline: "Timeline",
         insights: "Insights",
       },
+      views: {
+        tree: "Hierarchy",
+        graph: "Canvas",
+      },
       stats: {
         nodes: "Nodes",
         runtime: "Runtime",
@@ -53,6 +57,9 @@ const messages = {
         sourceLabel: "Source",
         sourceUpload: "Manual import",
         sourceConnection: "Database connection",
+      },
+      graph: {
+        empty: "Import a plan to render the canvas view.",
       },
     },
     history: {
@@ -130,6 +137,10 @@ const messages = {
         timeline: "时间线",
         insights: "洞察",
       },
+      views: {
+        tree: "层级视图",
+        graph: "可视化画布",
+      },
       stats: {
         nodes: "节点数",
         runtime: "总耗时",
@@ -153,6 +164,9 @@ const messages = {
         sourceLabel: "来源",
         sourceUpload: "手动导入",
         sourceConnection: "数据库获取",
+      },
+      graph: {
+        empty: "导入执行计划以查看画布效果",
       },
     },
     history: {
