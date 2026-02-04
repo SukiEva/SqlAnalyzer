@@ -221,6 +221,12 @@ onMounted(() => {
   min-height: 320px;
 }
 
+.timeline-pane :deep(.timeline) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 @media (max-width: 1200px) {
   .workspace-body {
     min-height: auto;
