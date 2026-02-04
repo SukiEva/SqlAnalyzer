@@ -5,8 +5,6 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { hierarchy, tree } from "d3-hierarchy";
 import { usePlanStore } from "@/stores/planStore";
 import { useI18n } from "vue-i18n";
-import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
-
 interface LayoutNode {
   id: string;
   name: string;
@@ -212,8 +210,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="graph-shell">
-    <div class="graph-stage" ref="stageRef" @wheel.prevent="handleWheel" @pointerdown="startDrag">
+  <div class="graph-stage" ref="stageRef" @wheel.prevent="handleWheel" @pointerdown="startDrag">
       <div v-if="layout.nodes.length" class="graph-content" :style="contentStyle">
         <svg class="graph-canvas" :style="canvasStyle" :viewBox="`0 0 ${layout.width} ${layout.height}`">
           <g class="links">
@@ -248,10 +245,6 @@ onBeforeUnmount(() => {
       </div>
       <p v-else class="empty">{{ t("plan.graph.empty") }}</p>
     </div>
-    <aside class="graph-side glass-panel">
-      <PlanNodeDetails :node="focusedNode" />
-    </aside>
-  </div>
   <div class="graph-footer">
     <div class="legend">
       <span>{{ t("plan.graph.slow") }}</span>
@@ -266,13 +259,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.graph-shell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 1.5rem;
-  align-items: stretch;
-}
-
 .graph-stage {
   position: relative;
   min-height: 460px;
@@ -285,14 +271,6 @@ onBeforeUnmount(() => {
 
 .graph-stage:active {
   cursor: grabbing;
-}
-
-.graph-side {
-  padding: 1.25rem 1.5rem;
-  min-height: 460px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .graph-content {
@@ -405,11 +383,8 @@ text {
 }
 
 @media (max-width: 1200px) {
-  .graph-shell {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .graph-side {
-    min-height: auto;
+  .graph-stage {
+    min-height: 380px;
   }
 }
 </style>

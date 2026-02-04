@@ -4,6 +4,7 @@ import PlanGraph from "@/components/PlanGraph.vue";
 import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
+import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -13,6 +14,7 @@ const { t } = useI18n();
 
 const nodes = computed(() => planStore.nodes);
 const insights = computed(() => planStore.insights);
+const focusedNode = computed(() => planStore.focusedNode);
 const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
   { id: "sql", label: t("plan.tabs.sql") },
@@ -80,7 +82,14 @@ onMounted(() => {
             <PlanTree :nodes="nodes" />
           </section>
           <section v-show="activeTab === 'canvas'" class="canvas-pane">
-            <PlanGraph :nodes="nodes" />
+            <div class="canvas-layout">
+              <div class="canvas-stage">
+                <PlanGraph :nodes="nodes" />
+              </div>
+              <aside class="canvas-detail glass-panel">
+                <PlanNodeDetails :node="focusedNode" />
+              </aside>
+            </div>
           </section>
           <section v-show="activeTab === 'timeline'" class="timeline-pane">
             <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
@@ -216,7 +225,24 @@ onMounted(() => {
 }
 
 .canvas-pane {
-  min-height: 480px;
+  min-height: 520px;
+}
+
+.canvas-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) 360px;
+  gap: 1.5rem;
+}
+
+.canvas-stage {
+  min-height: 520px;
+}
+
+.canvas-detail {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .timeline-pane :deep(.timeline) {
@@ -228,6 +254,9 @@ onMounted(() => {
 @media (max-width: 1200px) {
   .workspace-body {
     min-height: auto;
+  }
+  .canvas-layout {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>
