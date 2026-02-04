@@ -45,6 +45,9 @@ const expandedNodeId = ref<string | null>(null);
 const BASE_WIDTH = 240;
 const EXPANDED_WIDTH = 340;
 const EXPANDED_MARGIN = 40;
+const BASE_HEIGHT = 110;
+const EXPANDED_HEIGHT = 260;
+const EXPANDED_VERTICAL_PADDING = 30;
 
 const layout = computed<LayoutResult>(() => {
   if (!props.nodes.length) {
@@ -186,12 +189,18 @@ function handleSelect(node: LayoutNode) {
 }
 
 function nodeOffset(node: LayoutNode) {
-  if (!expandedNode.value || expandedNode.value.id === node.id) return 0;
-  const delta = EXPANDED_WIDTH - BASE_WIDTH + EXPANDED_MARGIN;
-  if (node.depth >= (expandedNode.value.depth ?? 0) && node.y > expandedNode.value.y) {
-    return delta;
+  if (!expandedNode.value || expandedNode.value.id === node.id) return { x: 0, y: 0 };
+  const deltaX = EXPANDED_WIDTH - BASE_WIDTH + EXPANDED_MARGIN;
+  const deltaY = EXPANDED_HEIGHT - BASE_HEIGHT + EXPANDED_VERTICAL_PADDING;
+  const offset = { x: 0, y: 0 };
+
+  if (node.depth >= expandedNode.value.depth && node.y > expandedNode.value.y) {
+    offset.x = deltaX;
   }
-  return 0;
+  if (node.depth > expandedNode.value.depth && node.x > expandedNode.value.x) {
+    offset.y = deltaY;
+  }
+  return offset;
 }
 
 function handleWheel(event: WheelEvent) {
@@ -265,9 +274,10 @@ onBeforeUnmount(() => {
             class="node-card"
             :class="{ expanded: expandedNodeId === node.id }"
             :style="{
-              left: `${node.y - 120 + nodeOffset(node)}px`,
-              top: `${node.x - 45}px`,
+              left: `${node.y - 120 + nodeOffset(node).x}px`,
+              top: `${node.x - 45 + nodeOffset(node).y}px`,
               width: `${expandedNodeId === node.id ? EXPANDED_WIDTH : BASE_WIDTH}px`,
+              minHeight: `${expandedNodeId === node.id ? EXPANDED_HEIGHT : BASE_HEIGHT}px`,
             }"
             @mouseenter="handleHover(node)"
             @mouseleave="handleLeave(node)"
