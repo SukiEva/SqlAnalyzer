@@ -3,13 +3,11 @@ import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
 import { usePlanStore } from "@/stores/planStore";
 import PlanImportModal from "@/components/PlanImportModal.vue";
-import PlanConnectionModal from "@/components/PlanConnectionModal.vue";
 
 const { t } = useI18n();
 const planStore = usePlanStore();
 const palette = ref("default");
 const openImport = ref(false);
-const openConnection = ref(false);
 
 const summary = computed(() => planStore.currentExecution?.summary);
 
@@ -30,10 +28,11 @@ function cyclePalette() {
     <div class="actions">
       <button class="ghost" @click="cyclePalette">Palette: {{ palette }}</button>
       <button class="ghost" @click="openImport = true">{{ t("app.importPlan") }}</button>
-      <button class="glow" @click="openConnection = true">{{ t("app.runExplain") }}</button>
+      <button class="glow" disabled title="Coming soon">
+        {{ t("app.runExplain") }}
+      </button>
     </div>
     <PlanImportModal :open="openImport" @close="openImport = false" />
-    <PlanConnectionModal :open="openConnection" @close="openConnection = false" />
   </div>
 </template>
 
