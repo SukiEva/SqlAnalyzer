@@ -4,7 +4,7 @@ import PlanTree from "@/components/PlanTree.vue";
 import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanHistoryPanel from "@/components/PlanHistoryPanel.vue";
-import PlanDocPanel from "@/components/PlanDocPanel.vue";
+import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted, ref } from "vue";
 
@@ -18,6 +18,7 @@ const tabs = [
   { id: "plan", label: "执行计划" },
   { id: "timeline", label: "时间线" },
   { id: "meta", label: "指标概览" },
+  { id: "history", label: "历史记录" },
 ];
 const activeTab = ref("plan");
 
@@ -29,14 +30,8 @@ onMounted(() => {
 <template>
   <div class="workspace-grid">
     <PlanToolbar class="toolbar" />
+    <PlanNodeTooltip />
     <section class="workspace-body">
-      <aside class="workspace-panel history glass-panel">
-        <PlanHistoryPanel
-          :history="history"
-          @select="planStore.loadFromHistory"
-          @delete="planStore.removePlan"
-        />
-      </aside>
       <div class="workspace-main glass-panel">
         <template v-if="current">
           <div class="plan-meta">
@@ -108,11 +103,17 @@ onMounted(() => {
               </article>
             </div>
           </section>
+          <section v-show="activeTab === 'history'" class="history-pane">
+            <PlanHistoryPanel
+              :history="history"
+              @select="planStore.loadFromHistory"
+              @delete="planStore.removePlan"
+            />
+          </section>
         </div>
       </div>
       <aside class="workspace-panel insights glass-panel">
         <PlanInsightPanel :insights="insights" />
-        <PlanDocPanel class="doc-panel" />
       </aside>
     </section>
   </div>
@@ -127,7 +128,7 @@ onMounted(() => {
 
 .workspace-body {
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr) 360px;
   gap: 2rem;
   min-height: 70vh;
 }
@@ -282,15 +283,14 @@ onMounted(() => {
   font-family: "JetBrains Mono", monospace;
 }
 
-.doc-panel {
-  flex: 1;
+.history-pane {
+  min-height: 420px;
 }
 
 @media (max-width: 1200px) {
   .workspace-body {
     grid-template-columns: minmax(0, 1fr);
   }
-  .workspace-panel.history,
   .workspace-panel.insights {
     order: 2;
   }

@@ -8,7 +8,11 @@ interface PlanState {
   currentExecution: PlanExecution | null;
   history: PlanExecution[];
   highlightedNodeId: string | null;
-  focusedDocKey: string | null;
+  docTooltip: {
+    key: string | null;
+    x: number;
+    y: number;
+  };
   bootstrapped: boolean;
 }
 
@@ -17,7 +21,7 @@ export const usePlanStore = defineStore("plan", {
     currentExecution: mockPlan,
     history: mockPlan ? [mockPlan] : [],
     highlightedNodeId: null,
-    focusedDocKey: null,
+    docTooltip: { key: null, x: 0, y: 0 },
     bootstrapped: false,
   }),
   getters: {
@@ -53,9 +57,6 @@ export const usePlanStore = defineStore("plan", {
     highlightNode(nodeId: string | null) {
       this.highlightedNodeId = nodeId;
     },
-    focusDoc(docKey: string | null) {
-      this.focusedDocKey = docKey;
-    },
     loadFromHistory(planId: string) {
       const found = this.history.find((entry) => entry.summary.id === planId);
       if (found) {
@@ -68,6 +69,20 @@ export const usePlanStore = defineStore("plan", {
         this.currentExecution = this.history[0] ?? null;
       }
       saveLocalPlans(this.history);
+    },
+    showDocTooltip(docKey: string | null, coords?: { x: number; y: number }) {
+      if (!docKey || !coords) {
+        this.docTooltip = { key: null, x: 0, y: 0 };
+        return;
+      }
+      this.docTooltip = {
+        key: docKey,
+        x: coords.x,
+        y: coords.y,
+      };
+    },
+    hideDocTooltip() {
+      this.docTooltip = { key: null, x: 0, y: 0 };
     },
   },
 });

@@ -44,12 +44,18 @@ function selectNode() {
   store.highlightNode(props.node.id);
 }
 
-function handleHover() {
-  store.focusDoc(props.node.docKey ?? null);
+function handleHover(event: MouseEvent) {
+  if (!props.node.docKey) return;
+  const target = event.currentTarget as HTMLElement;
+  const rect = target.getBoundingClientRect();
+  store.showDocTooltip(props.node.docKey, {
+    x: rect.left + rect.width + 12,
+    y: rect.top + window.scrollY,
+  });
 }
 
 function handleLeave() {
-  store.focusDoc(null);
+  store.hideDocTooltip();
 }
 </script>
 
