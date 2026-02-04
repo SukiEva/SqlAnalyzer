@@ -209,24 +209,10 @@ onMounted(() => {
 .sql-pane,
 .timeline-pane,
 .insights-pane {
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: radial-gradient(
-      circle at 15% 20%,
-      rgba(80, 227, 194, 0.08),
-      transparent 40%
-    ),
-    rgba(255, 255, 255, 0.02);
-  padding: 1rem 1.25rem;
+  padding: 0;
 }
 
 .plan-pane {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.sql-pane {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -237,14 +223,15 @@ onMounted(() => {
   min-height: 320px;
 }
 
-.timeline-pane {
-  height: 100%;
+.sql-pane,
+.timeline-pane,
+.insights-pane {
+  display: flex;
+  flex-direction: column;
 }
 
 .insights-pane {
   min-height: 320px;
-  display: flex;
-  flex-direction: column;
 }
 
 @media (max-width: 1200px) {
