@@ -12,6 +12,7 @@ interface LayoutNode {
   name: string;
   x: number;
   y: number;
+  depth: number;
   node: PlanNode;
   runtimeRatio: number;
   docSummary?: string | null;
@@ -41,6 +42,9 @@ const dragging = ref(false);
 const dragOrigin = ref({ x: 0, y: 0 });
 const transformOrigin = ref({ x: 0, y: 0 });
 const expandedNodeId = ref<string | null>(null);
+const BASE_WIDTH = 240;
+const EXPANDED_WIDTH = 340;
+const EXPANDED_MARGIN = 40;
 
 const layout = computed<LayoutResult>(() => {
   if (!props.nodes.length) {
@@ -76,6 +80,7 @@ const layout = computed<LayoutResult>(() => {
     node: node.data,
     x: node.x - minX + 50,
     y: node.y + 140,
+    depth: node.depth - 1,
     runtimeRatio: 0,
   }));
 
@@ -120,6 +125,10 @@ const contentStyle = computed(() => ({
   transform: `translate(${transform.value.x}px, ${transform.value.y}px) scale(${transform.value.scale})`,
   transformOrigin: "0 0",
 }));
+
+const expandedNode = computed(() =>
+  layout.value.nodes.find((node) => node.id === expandedNodeId.value) ?? null,
+);
 
 watch(
   () => props.nodes.map((node) => node.id).join(","),
@@ -174,6 +183,15 @@ function handleSelect(node: LayoutNode) {
   expandedNodeId.value = node.id;
   planStore.focusNode(node.id);
   planStore.highlightNode(node.id);
+}
+
+function nodeOffset(node: LayoutNode) {
+  if (!expandedNode.value || expandedNode.value.id === node.id) return 0;
+  const delta = EXPANDED_WIDTH - BASE_WIDTH + EXPANDED_MARGIN;
+  if (node.depth >= (expandedNode.value.depth ?? 0) && node.y > expandedNode.value.y) {
+    return delta;
+  }
+  return 0;
 }
 
 function handleWheel(event: WheelEvent) {
@@ -246,7 +264,11 @@ onBeforeUnmount(() => {
             :key="node.id"
             class="node-card"
             :class="{ expanded: expandedNodeId === node.id }"
-            :style="{ left: `${node.y - 120}px`, top: `${node.x - 45}px` }"
+            :style="{
+              left: `${node.y - 120 + nodeOffset(node)}px`,
+              top: `${node.x - 45}px`,
+              width: `${expandedNodeId === node.id ? EXPANDED_WIDTH : BASE_WIDTH}px`,
+            }"
             @mouseenter="handleHover(node)"
             @mouseleave="handleLeave(node)"
             @pointerdown.stop
@@ -350,7 +372,6 @@ onBeforeUnmount(() => {
 
 .node-card {
   position: absolute;
-  width: 240px;
   min-height: 90px;
   border-radius: 18px;
   background: rgba(14, 20, 38, 0.92);
