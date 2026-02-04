@@ -3,6 +3,7 @@ import type { PropType } from "vue";
 import type { PlanNode } from "@/modules/planModel";
 import { computed, ref, watch } from "vue";
 import { usePlanStore } from "@/stores/planStore";
+import { useI18n } from "vue-i18n";
 
 defineOptions({ name: "PlanTreeNode" });
 
@@ -18,6 +19,7 @@ const props = defineProps({
 });
 
 const store = usePlanStore();
+const { t } = useI18n();
 const isCollapsed = ref(props.node.collapsed ?? props.node.children.length > 3);
 
 watch(
@@ -46,11 +48,9 @@ function selectNode() {
 
 function handleHover(event: MouseEvent) {
   if (!props.node.docKey) return;
-  const target = event.currentTarget as HTMLElement;
-  const rect = target.getBoundingClientRect();
   store.showDocTooltip(props.node.docKey, {
-    x: rect.left + rect.width + 12,
-    y: rect.top + window.scrollY,
+    x: event.clientX + 20,
+    y: event.clientY + window.scrollY - 12,
   });
 }
 
@@ -74,8 +74,9 @@ function handleLeave() {
       <div class="title-block">
         <p class="title">{{ node.name }}</p>
         <p class="subtitle">
-          Rows {{ node.metrics.actualRows.toLocaleString() }} · Time {{ node.metrics.actualTimeMs }} ms · DN
-          {{ node.metrics.dn ?? "CN" }}
+          {{ t("plan.node.rows") }} {{ node.metrics.actualRows.toLocaleString() }} ·
+          {{ t("plan.node.time") }} {{ node.metrics.actualTimeMs }} ms ·
+          {{ t("plan.node.dn") }} {{ node.metrics.dn ?? "CN" }}
         </p>
       </div>
       <span class="ratio" :class="{ bad: ratio > 1.5 }">x{{ ratio.toFixed(2) }}</span>

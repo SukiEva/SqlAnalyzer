@@ -2,8 +2,10 @@
 import { computed } from "vue";
 import { usePlanStore } from "@/stores/planStore";
 import { lookupDocEntry } from "@/services/nodeDocs";
+import { useI18n } from "vue-i18n";
 
 const planStore = usePlanStore();
+const { t } = useI18n();
 
 const tooltip = computed(() => {
   const key = planStore.docTooltip.key;
@@ -32,7 +34,7 @@ const tooltip = computed(() => {
       <ul>
         <li v-for="tip in tooltip.entry.optimization" :key="tip">{{ tip }}</li>
       </ul>
-      <a :href="tooltip.entry.sourceUrl" target="_blank">查看官方说明</a>
+      <a :href="tooltip.entry.sourceUrl" target="_blank">{{ t("tooltip.officialDoc") }}</a>
     </div>
   </teleport>
 </template>

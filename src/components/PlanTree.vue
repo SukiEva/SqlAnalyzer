@@ -4,6 +4,7 @@ import type { PlanNode } from "@/modules/planModel";
 import PlanTreeNode from "@/components/PlanTreeNode.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   nodes: {
@@ -14,6 +15,7 @@ const props = defineProps({
 
 const planStore = usePlanStore();
 const highlighted = computed(() => planStore.highlightedNodeId);
+const { t } = useI18n();
 </script>
 
 <template>
@@ -24,7 +26,7 @@ const highlighted = computed(() => planStore.highlightedNodeId);
       :node="node"
       :highlighted="highlighted"
     />
-    <p v-if="!props.nodes.length" class="empty">Import a plan to begin.</p>
+    <p v-if="!props.nodes.length" class="empty">{{ t("plan.emptyState") }}</p>
   </div>
 </template>
 

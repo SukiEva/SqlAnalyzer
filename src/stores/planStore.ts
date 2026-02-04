@@ -4,6 +4,8 @@ import { mockPlan } from "@/modules/planSamples";
 import { evaluatePlan } from "@/modules/insights";
 import { loadLocalPlans, saveLocalPlans } from "@/services/historyStorage";
 
+const TOOLTIP_HIDE_DELAY = 400;
+
 interface PlanState {
   currentExecution: PlanExecution | null;
   history: PlanExecution[];
@@ -90,7 +92,7 @@ export const usePlanStore = defineStore("plan", {
       }
       this.docTooltip.hideTimer = window.setTimeout(() => {
         this.hideDocTooltip();
-      }, 150);
+      }, TOOLTIP_HIDE_DELAY);
     },
     cancelDocTooltipHide() {
       if (this.docTooltip.hideTimer) {

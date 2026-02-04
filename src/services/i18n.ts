@@ -14,14 +14,16 @@ function detectLocale(): string {
 const messages = {
   en: {
     app: {
-      title: "Huawei Plan Visualizer",
+      title: "Sql Analyzer",
       workspace: "Workspace",
       history: "History",
       settings: "Settings",
       importPlan: "Import Plan",
       runExplain: "Run EXPLAIN",
+      insights: "Insights",
     },
     plan: {
+      emptyState: "Import a plan to begin.",
       tabs: {
         structure: "Plan Tree",
         timeline: "Timeline",
@@ -35,6 +37,11 @@ const messages = {
       sql: {
         title: "Associated SQL",
         badge: "Context",
+      },
+      node: {
+        rows: "Rows",
+        time: "Time",
+        dn: "Node",
       },
       timeline: {
         topNodes: "Top {count} nodes",
@@ -96,17 +103,25 @@ const messages = {
     historyPanel: {
       title: "Plan History",
     },
+    insights: {
+      empty: "No insights yet. Import a plan to see guidance.",
+    },
+    tooltip: {
+      officialDoc: "Open official guide",
+    },
   },
   zh: {
     app: {
-      title: "华为执行计划可视化",
+      title: "Sql Analyzer",
       workspace: "工作台",
       history: "历史记录",
       settings: "设置",
       importPlan: "导入计划",
       runExplain: "执行 EXPLAIN",
+      insights: "洞察",
     },
     plan: {
+      emptyState: "导入执行计划以开始分析",
       tabs: {
         structure: "执行计划",
         timeline: "时间线",
@@ -120,6 +135,11 @@ const messages = {
       sql: {
         title: "关联 SQL",
         badge: "上下文",
+      },
+      node: {
+        rows: "行数",
+        time: "耗时",
+        dn: "节点",
       },
       timeline: {
         topNodes: "展示前 {count} 个节点",
@@ -180,6 +200,12 @@ const messages = {
     },
     historyPanel: {
       title: "执行计划历史",
+    },
+    insights: {
+      empty: "暂无洞察，导入执行计划后可查看建议。",
+    },
+    tooltip: {
+      officialDoc: "查看官方说明",
     },
   },
 };

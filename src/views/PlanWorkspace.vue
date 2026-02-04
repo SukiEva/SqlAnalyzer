@@ -54,13 +54,6 @@ onMounted(() => {
               </div>
             </div>
           </div>
-          <div class="sql-block" v-if="current.summary.sqlText">
-            <div class="sql-block__header">
-              <p>{{ t("plan.sql.title") }}</p>
-              <span class="tag">{{ t("plan.sql.badge") }}</span>
-            </div>
-            <pre class="sql-code">{{ current.summary.sqlText }}</pre>
-          </div>
         </template>
         <div class="tab-strip">
           <button
@@ -75,6 +68,13 @@ onMounted(() => {
         </div>
         <div class="tab-panels">
           <section v-show="activeTab === 'plan'" class="plan-pane">
+            <div class="sql-block" v-if="current?.summary.sqlText">
+              <div class="sql-block__header">
+                <p>{{ t("plan.sql.title") }}</p>
+                <span class="tag">{{ t("plan.sql.badge") }}</span>
+              </div>
+              <pre class="sql-code">{{ current?.summary.sqlText }}</pre>
+            </div>
             <PlanTree :nodes="nodes" />
           </section>
           <section v-show="activeTab === 'timeline'" class="timeline-pane">
@@ -241,6 +241,17 @@ onMounted(() => {
     ),
     rgba(255, 255, 255, 0.02);
   padding: 1rem 1.25rem;
+}
+
+.plan-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.plan-pane :deep(.plan-tree) {
+  flex: 1;
+  min-height: 320px;
 }
 
 .timeline-pane {

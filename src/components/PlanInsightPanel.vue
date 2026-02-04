@@ -31,7 +31,7 @@ const severityClass: Record<string, string> = {
         <h4>{{ insight.title }}</h4>
         <p>{{ insight.details }}</p>
       </article>
-      <p v-if="!props.insights.length" class="empty">{{ t("history.panel.empty") }}</p>
+      <p v-if="!props.insights.length" class="empty">{{ t("insights.empty") }}</p>
     </div>
   </div>
 </template>
