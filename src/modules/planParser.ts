@@ -273,6 +273,7 @@ function finalizeExecution(nodes: PlanNode[], dialect: PlanDialect, options: Par
       source: options.source ?? "upload",
       sqlFingerprint: `${summaryTitle}-${summaryId.slice(0, 8)}`,
       title: summaryTitle,
+      tags: [],
     },
     nodes,
     stats: {
@@ -280,5 +281,6 @@ function finalizeExecution(nodes: PlanNode[], dialect: PlanDialect, options: Par
       totalMemoryMB: Math.round(totalMemory),
       nodeCount,
     },
+    annotations: {},
   };
 }

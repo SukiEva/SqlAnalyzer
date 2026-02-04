@@ -11,6 +11,7 @@ export const mockPlan: PlanExecution = {
     source: "upload",
     sqlFingerprint: "select-orders-v1",
     title: "Order aggregation demo",
+    tags: ["demo", "orders"],
   },
   stats: {
     totalTimeMs: 1234,
@@ -95,4 +96,7 @@ export const mockPlan: PlanExecution = {
       ],
     },
   ],
+  annotations: {
+    [`${baseId}-root`]: ["Check aggregation pushdown possibilities"],
+  },
 };

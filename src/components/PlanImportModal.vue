@@ -27,14 +27,14 @@ function close() {
   emit("close");
 }
 
-function submit() {
+async function submit() {
   try {
     const plan = parsePlanText(payload.value, {
       dialectHint: dialect.value,
       title: title.value,
       source: "upload",
     });
-    planStore.setPlan(plan);
+    await planStore.ingestPlan(plan);
     close();
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Failed to parse plan";

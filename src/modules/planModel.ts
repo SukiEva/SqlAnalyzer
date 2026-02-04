@@ -29,6 +29,7 @@ export interface PlanSummary {
   source: "upload" | "connection";
   sqlFingerprint: string;
   title: string;
+  tags?: string[];
 }
 
 export interface PlanExecution {
@@ -39,6 +40,7 @@ export interface PlanExecution {
     totalMemoryMB: number;
     nodeCount: number;
   };
+  annotations?: Record<string, string[]>;
 }
 
 export interface PlanInsight {

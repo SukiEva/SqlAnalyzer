@@ -111,6 +111,20 @@ button.glow:active {
   transform: translateY(2px);
 }
 
+button.ghost {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+button.ghost:hover {
+  border-color: var(--accent-1);
+}
+
 .tag {
   padding: 0.2rem 0.6rem;
   border-radius: 999px;

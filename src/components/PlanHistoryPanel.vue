@@ -11,10 +11,15 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: "select", id: string): void;
+  (e: "delete", id: string): void;
 }>();
 
 function select(id: string) {
   emit("select", id);
+}
+
+function remove(id: string) {
+  emit("delete", id);
 }
 </script>
 
@@ -25,16 +30,17 @@ function select(id: string) {
       <span class="tag">{{ props.history.length }} stored</span>
     </header>
     <div class="history-list scroll-y">
-      <article
-        v-for="entry in props.history"
-        :key="entry.id"
-        class="history-card"
-        @click="select(entry.id)"
-      >
-        <p class="history-title">{{ entry.title }}</p>
+      <article v-for="entry in props.history" :key="entry.id" class="history-card" @click="select(entry.id)">
+        <div class="card-head">
+          <p class="history-title">{{ entry.title }}</p>
+          <button class="delete" title="Remove from history" @click.stop="remove(entry.id)">✕</button>
+        </div>
         <p class="history-meta">
           {{ entry.dialect.toUpperCase() }} ·
           {{ new Date(entry.capturedAt).toLocaleString() }}
+        </p>
+        <p class="tags" v-if="entry.tags?.length">
+          <span v-for="tag in entry.tags" :key="tag" class="tag">{{ tag }}</span>
         </p>
       </article>
       <p v-if="!props.history.length" class="empty">No entries yet</p>
@@ -72,6 +78,12 @@ header {
   transition: border-color 0.2s ease;
 }
 
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .history-card:hover {
   border-color: var(--accent-1);
 }
@@ -79,6 +91,21 @@ header {
 .history-title {
   margin: 0;
   font-size: 0.95rem;
+}
+
+.delete {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.tags {
+  margin: 0.35rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
 .history-meta {
