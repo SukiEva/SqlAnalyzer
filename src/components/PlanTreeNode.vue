@@ -55,7 +55,7 @@ function handleHover(event: MouseEvent) {
 }
 
 function handleLeave() {
-  store.hideDocTooltip();
+  store.scheduleDocTooltipHide();
 }
 </script>
 

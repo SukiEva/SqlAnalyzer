@@ -12,6 +12,7 @@ interface PlanState {
     key: string | null;
     x: number;
     y: number;
+    hideTimer: number | null;
   };
   bootstrapped: boolean;
 }
@@ -21,7 +22,7 @@ export const usePlanStore = defineStore("plan", {
     currentExecution: mockPlan,
     history: mockPlan ? [mockPlan] : [],
     highlightedNodeId: null,
-    docTooltip: { key: null, x: 0, y: 0 },
+    docTooltip: { key: null, x: 0, y: 0, hideTimer: null },
     bootstrapped: false,
   }),
   getters: {
@@ -72,17 +73,39 @@ export const usePlanStore = defineStore("plan", {
     },
     showDocTooltip(docKey: string | null, coords?: { x: number; y: number }) {
       if (!docKey || !coords) {
-        this.docTooltip = { key: null, x: 0, y: 0 };
+        this.hideDocTooltip();
         return;
       }
-      this.docTooltip = {
-        key: docKey,
-        x: coords.x,
-        y: coords.y,
-      };
+      if (this.docTooltip.hideTimer) {
+        clearTimeout(this.docTooltip.hideTimer);
+        this.docTooltip.hideTimer = null;
+      }
+      this.docTooltip.key = docKey;
+      this.docTooltip.x = coords.x;
+      this.docTooltip.y = coords.y;
+    },
+    scheduleDocTooltipHide() {
+      if (this.docTooltip.hideTimer) {
+        clearTimeout(this.docTooltip.hideTimer);
+      }
+      this.docTooltip.hideTimer = window.setTimeout(() => {
+        this.hideDocTooltip();
+      }, 150);
+    },
+    cancelDocTooltipHide() {
+      if (this.docTooltip.hideTimer) {
+        clearTimeout(this.docTooltip.hideTimer);
+        this.docTooltip.hideTimer = null;
+      }
     },
     hideDocTooltip() {
-      this.docTooltip = { key: null, x: 0, y: 0 };
+      if (this.docTooltip.hideTimer) {
+        clearTimeout(this.docTooltip.hideTimer);
+        this.docTooltip.hideTimer = null;
+      }
+      this.docTooltip.key = null;
+      this.docTooltip.x = 0;
+      this.docTooltip.y = 0;
     },
   },
 });

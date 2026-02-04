@@ -24,6 +24,8 @@ const tooltip = computed(() => {
       v-if="tooltip"
       class="node-tooltip"
       :style="{ left: `${tooltip.x}px`, top: `${tooltip.y}px` }"
+      @mouseenter="planStore.cancelDocTooltipHide"
+      @mouseleave="planStore.hideDocTooltip"
     >
       <h4>{{ tooltip.entry.title }}</h4>
       <p>{{ tooltip.entry.summary }}</p>
