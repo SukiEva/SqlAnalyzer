@@ -5,7 +5,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { hierarchy, tree } from "d3-hierarchy";
 import { usePlanStore } from "@/stores/planStore";
 import { useI18n } from "vue-i18n";
-import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
+import { lookupDocEntry } from "@/services/nodeDocs";
 
 interface LayoutNode {
   id: string;
@@ -14,6 +14,7 @@ interface LayoutNode {
   y: number;
   node: PlanNode;
   runtimeRatio: number;
+  docSummary?: string | null;
 }
 
 interface LayoutResult {
@@ -39,8 +40,7 @@ const transform = ref({ x: 40, y: 40, scale: 1 });
 const dragging = ref(false);
 const dragOrigin = ref({ x: 0, y: 0 });
 const transformOrigin = ref({ x: 0, y: 0 });
-const detailOpen = ref(false);
-const focusedNode = computed(() => planStore.focusedNode);
+const expandedNodeId = ref<string | null>(null);
 
 const layout = computed<LayoutResult>(() => {
   if (!props.nodes.length) {
@@ -86,6 +86,7 @@ const layout = computed<LayoutResult>(() => {
 
   normalizedNodes.forEach((node) => {
     node.runtimeRatio = (node.node.metrics.actualTimeMs || 0) / maxRuntime;
+    node.docSummary = node.node.docKey ? lookupDocEntry(node.node.docKey)?.summary ?? null : null;
   });
 
   const nodeLookup = new Map<string, LayoutNode>();
@@ -124,7 +125,8 @@ watch(
   () => props.nodes.map((node) => node.id).join(","),
   () => {
     resetView();
-    detailOpen.value = false;
+    expandedNodeId.value = null;
+    planStore.highlightNode(null);
   },
 );
 
@@ -157,14 +159,21 @@ function handleHover(node: LayoutNode) {
   planStore.highlightNode(node.id);
 }
 
-function handleLeave() {
+function handleLeave(node?: LayoutNode) {
+  if (node && expandedNodeId.value === node.id) return;
   planStore.highlightNode(null);
 }
 
 function handleSelect(node: LayoutNode) {
+  const isExpanded = expandedNodeId.value === node.id;
+  if (isExpanded) {
+    expandedNodeId.value = null;
+    planStore.highlightNode(null);
+    return;
+  }
+  expandedNodeId.value = node.id;
   planStore.focusNode(node.id);
   planStore.highlightNode(node.id);
-  detailOpen.value = true;
 }
 
 function handleWheel(event: WheelEvent) {
@@ -230,36 +239,53 @@ onBeforeUnmount(() => {
               :style="{ stroke: runtimeColor(link.target.runtimeRatio) }"
             />
           </g>
-          <g class="nodes">
-            <g
-              v-for="node in layout.nodes"
-              :key="node.id"
-              class="node"
-              :transform="`translate(${node.y - 120}, ${node.x - 45})`"
-              @mouseenter="handleHover(node)"
-              @mouseleave="handleLeave"
-              @pointerdown.stop
-              @click="handleSelect(node)"
-            >
-              <rect :fill="runtimeColor(node.runtimeRatio)" />
-              <text class="label">{{ node.name }}</text>
-              <text class="meta">
+        </svg>
+        <div class="node-layer" :style="canvasStyle">
+          <article
+            v-for="node in layout.nodes"
+            :key="node.id"
+            class="node-card"
+            :class="{ expanded: expandedNodeId === node.id }"
+            :style="{ left: `${node.y - 120}px`, top: `${node.x - 45}px` }"
+            @mouseenter="handleHover(node)"
+            @mouseleave="handleLeave(node)"
+            @pointerdown.stop
+            @click="handleSelect(node)"
+          >
+            <header>
+              <h4>{{ node.name }}</h4>
+              <p>
                 {{ node.node.metrics.actualTimeMs }} ms · {{ t("plan.node.rows") }}
                 {{ node.node.metrics.actualRows.toLocaleString() }}
-              </text>
-            </g>
-          </g>
-        </svg>
-      </div>
-      <p v-else class="empty">{{ t("plan.graph.empty") }}</p>
-      <div class="drawer" :class="{ open: detailOpen }" @pointerdown.stop>
-        <button class="drawer-toggle" @click="detailOpen = !detailOpen">
-          {{ detailOpen ? t("plan.graph.collapse") : t("plan.graph.expand") }}
-        </button>
-        <div v-if="detailOpen" class="drawer-body">
-          <PlanNodeDetails :node="focusedNode" />
+              </p>
+            </header>
+            <section v-if="expandedNodeId === node.id" class="node-extra">
+              <p v-if="node.docSummary" class="doc">{{ node.docSummary }}</p>
+              <div class="stat-grid">
+                <div>
+                  <span>{{ t("plan.node.time") }}</span>
+                  <strong>{{ node.node.metrics.actualTimeMs }} ms</strong>
+                </div>
+                <div>
+                  <span>{{ t("plan.stats.memory") }}</span>
+                  <strong>{{ node.node.metrics.memoryMB ?? t("plan.details.unknown") }}</strong>
+                </div>
+                <div>
+                  <span>{{ t("plan.node.dn") }}</span>
+                  <strong>{{ node.node.metrics.dn ?? "CN" }}</strong>
+                </div>
+              </div>
+              <div v-if="Object.keys(node.node.properties).length" class="prop-grid">
+                <div v-for="(value, key) in node.node.properties" :key="key">
+                  <span>{{ key }}</span>
+                  <strong>{{ value }}</strong>
+                </div>
+              </div>
+            </section>
+          </article>
         </div>
       </div>
+      <p v-else class="empty">{{ t("plan.graph.empty") }}</p>
     </div>
     <div class="graph-footer">
       <div class="legend">
@@ -316,45 +342,96 @@ onBeforeUnmount(() => {
   filter: drop-shadow(0 8px 16px rgba(5, 9, 20, 0.45));
 }
 
-.nodes .node {
-  cursor: pointer;
-  transition: transform 0.15s ease;
+.node-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-.nodes .node:hover {
-  transform: scale(1.02) translate(0, 0);
-}
-
-rect {
+.node-card {
+  position: absolute;
   width: 240px;
-  height: 90px;
-  rx: 18px;
-  ry: 18px;
-  fill: rgba(75, 123, 236, 0.2);
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 1px;
-  filter: drop-shadow(0 25px 40px rgba(5, 9, 20, 0.65));
+  min-height: 90px;
+  border-radius: 18px;
+  background: rgba(14, 20, 38, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.75rem 0.85rem;
+  box-shadow: 0 20px 40px rgba(5, 9, 20, 0.45);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.nodes .node:hover rect {
-  stroke: rgba(255, 255, 255, 0.65);
+.node-card:hover {
+  border-color: var(--accent-1);
 }
 
-text {
-  pointer-events: none;
+.node-card.expanded {
+  width: 300px;
+  background: rgba(14, 32, 58, 0.96);
 }
 
-.label {
+.node-card header {
+  margin-bottom: 0.4rem;
+}
+
+.node-card h4 {
+  margin: 0;
   font-size: 1rem;
-  font-weight: 600;
-  fill: var(--text-primary);
-  transform: translate(20px, 36px);
 }
 
-.meta {
+.node-card p {
+  margin: 0.1rem 0 0;
+  color: var(--text-secondary);
   font-size: 0.78rem;
-  fill: var(--text-secondary);
-  transform: translate(20px, 60px);
+}
+
+.node-extra {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.node-extra .doc {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.stat-grid span {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.stat-grid strong {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+}
+
+.prop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.prop-grid span {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.prop-grid strong {
+  font-size: 0.85rem;
+  font-family: "JetBrains Mono", monospace;
 }
 
 .empty {

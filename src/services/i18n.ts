@@ -61,8 +61,6 @@ const messages = {
         reset: "Reset view",
         slow: "Slow",
         hot: "Hot",
-        expand: "Show details",
-        collapse: "Hide details",
       },
       details: {
         title: "Node details",
@@ -179,8 +177,6 @@ const messages = {
         reset: "重置视角",
         slow: "低耗时",
         hot: "热点",
-        expand: "展开详情",
-        collapse: "收起详情",
       },
       details: {
         title: "节点详情",
