@@ -13,6 +13,7 @@ interface LayoutNode {
   x: number;
   y: number;
   depth: number;
+  parentId: string | null;
   node: PlanNode;
   runtimeRatio: number;
   docSummary?: string | null;
@@ -84,6 +85,7 @@ const layout = computed<LayoutResult>(() => {
     x: node.x - minX + 50,
     y: node.y + 140,
     depth: node.depth - 1,
+    parentId: node.parent?.data.id ?? null,
     runtimeRatio: 0,
   }));
 
@@ -189,12 +191,18 @@ function handleSelect(node: LayoutNode) {
 }
 
 function nodeOffset(node: LayoutNode) {
-  if (!expandedNode.value || expandedNode.value.id === node.id) return { x: 0, y: 0 };
+  if (
+    !expandedNode.value ||
+    expandedNode.value.id === node.id ||
+    node.parentId !== expandedNode.value.parentId
+  ) {
+    return { x: 0, y: 0 };
+  }
   const deltaX = EXPANDED_WIDTH - BASE_WIDTH + EXPANDED_MARGIN;
   const deltaY = EXPANDED_HEIGHT - BASE_HEIGHT + EXPANDED_VERTICAL_PADDING;
   const offset = { x: 0, y: 0 };
 
-  if (node.depth >= expandedNode.value.depth && node.y > expandedNode.value.y) {
+  if (node.y > expandedNode.value.y) {
     offset.x = deltaX;
   }
   if (node.x > expandedNode.value.x) {
@@ -389,6 +397,7 @@ onBeforeUnmount(() => {
   padding: 0.75rem 0.85rem;
   box-shadow: 0 20px 40px rgba(5, 9, 20, 0.45);
   cursor: pointer;
+  z-index: 1;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
@@ -397,8 +406,8 @@ onBeforeUnmount(() => {
 }
 
 .node-card.expanded {
-  width: 300px;
   background: rgba(14, 32, 58, 0.96);
+  z-index: 5;
 }
 
 .node-card header {
