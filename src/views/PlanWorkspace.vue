@@ -188,10 +188,6 @@ onMounted(() => {
   background: rgba(75, 123, 236, 0.2);
 }
 
-.tab-panels {
-  min-height: 420px;
-}
-
 .plan-pane,
 .sql-pane,
 .timeline-pane,
@@ -203,6 +199,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-height: 420px;
 }
 
 .plan-pane :deep(.plan-tree) {

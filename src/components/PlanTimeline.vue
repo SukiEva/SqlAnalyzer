@@ -66,6 +66,7 @@ const maxTime = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  height: 100%;
 }
 
 .timeline-meta {
@@ -83,7 +84,7 @@ const maxTime = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 160px;
+  flex: 1;
 }
 
 .timeline-row {
