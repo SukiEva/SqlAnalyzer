@@ -60,6 +60,10 @@ const messages = {
       },
       graph: {
         empty: "Import a plan to render the canvas view.",
+        hint: "Scroll to zoom, drag to pan",
+        reset: "Reset view",
+        slow: "Slow",
+        hot: "Hot",
       },
     },
     history: {
@@ -167,6 +171,10 @@ const messages = {
       },
       graph: {
         empty: "导入执行计划以查看画布效果",
+        hint: "滚轮缩放，拖拽平移画布",
+        reset: "重置视角",
+        slow: "低耗时",
+        hot: "热点",
       },
     },
     history: {
