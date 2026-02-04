@@ -197,7 +197,7 @@ function nodeOffset(node: LayoutNode) {
   if (node.depth >= expandedNode.value.depth && node.y > expandedNode.value.y) {
     offset.x = deltaX;
   }
-  if (node.depth > expandedNode.value.depth && node.x > expandedNode.value.x) {
+  if (node.x > expandedNode.value.x) {
     offset.y = deltaY;
   }
   return offset;
