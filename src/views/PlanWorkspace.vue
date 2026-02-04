@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import PlanToolbar from "@/components/PlanToolbar.vue";
 import PlanTree from "@/components/PlanTree.vue";
 import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
-import PlanHistoryPanel from "@/components/PlanHistoryPanel.vue";
 import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted, ref } from "vue";
@@ -12,13 +10,11 @@ const planStore = usePlanStore();
 
 const nodes = computed(() => planStore.nodes);
 const insights = computed(() => planStore.insights);
-const history = computed(() => planStore.historySummaries);
 const current = computed(() => planStore.currentExecution);
 const tabs = [
   { id: "plan", label: "执行计划" },
   { id: "timeline", label: "时间线" },
   { id: "meta", label: "指标概览" },
-  { id: "history", label: "历史记录" },
 ];
 const activeTab = ref("plan");
 
@@ -29,7 +25,6 @@ onMounted(() => {
 
 <template>
   <div class="workspace-grid">
-    <PlanToolbar class="toolbar" />
     <PlanNodeTooltip />
     <section class="workspace-body">
       <div class="workspace-main glass-panel">
@@ -102,13 +97,6 @@ onMounted(() => {
                 <p>{{ current?.summary.source === "upload" ? "手动导入" : "数据库连接" }}</p>
               </article>
             </div>
-          </section>
-          <section v-show="activeTab === 'history'" class="history-pane">
-            <PlanHistoryPanel
-              :history="history"
-              @select="planStore.loadFromHistory"
-              @delete="planStore.removePlan"
-            />
           </section>
         </div>
       </div>
