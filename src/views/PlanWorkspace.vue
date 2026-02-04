@@ -5,17 +5,19 @@ import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const planStore = usePlanStore();
+const { t } = useI18n();
 
 const nodes = computed(() => planStore.nodes);
 const insights = computed(() => planStore.insights);
 const current = computed(() => planStore.currentExecution);
-const tabs = [
-  { id: "plan", label: "执行计划" },
-  { id: "timeline", label: "时间线" },
-  { id: "meta", label: "指标概览" },
-];
+const tabs = computed(() => [
+  { id: "plan", label: t("plan.tabs.structure") },
+  { id: "timeline", label: t("plan.tabs.timeline") },
+  { id: "meta", label: t("plan.tabs.metrics") },
+]);
 const activeTab = ref("plan");
 
 onMounted(() => {
@@ -39,23 +41,23 @@ onMounted(() => {
             </div>
             <div class="plan-stats">
               <div>
-                <span class="plan-stat-label">Nodes</span>
+                <span class="plan-stat-label">{{ t("plan.stats.nodes") }}</span>
                 <span class="plan-stat-value">{{ current.stats.nodeCount }}</span>
               </div>
               <div>
-                <span class="plan-stat-label">Runtime</span>
+                <span class="plan-stat-label">{{ t("plan.stats.runtime") }}</span>
                 <span class="plan-stat-value">{{ current.stats.totalTimeMs }} ms</span>
               </div>
               <div>
-                <span class="plan-stat-label">Memory</span>
+                <span class="plan-stat-label">{{ t("plan.stats.memory") }}</span>
                 <span class="plan-stat-value">{{ current.stats.totalMemoryMB }} MB</span>
               </div>
             </div>
           </div>
           <div class="sql-block" v-if="current.summary.sqlText">
             <div class="sql-block__header">
-              <p>关联 SQL</p>
-              <span class="tag">上下文</span>
+              <p>{{ t("plan.sql.title") }}</p>
+              <span class="tag">{{ t("plan.sql.badge") }}</span>
             </div>
             <pre class="sql-code">{{ current.summary.sqlText }}</pre>
           </div>
@@ -81,20 +83,26 @@ onMounted(() => {
           <section v-show="activeTab === 'meta'" class="meta-pane">
             <div class="meta-cards">
               <article>
-                <h4>节点数量</h4>
+                <h4>{{ t("plan.stats.nodes") }}</h4>
                 <p>{{ current?.stats.nodeCount ?? 0 }}</p>
               </article>
               <article>
-                <h4>总耗时</h4>
+                <h4>{{ t("plan.stats.runtime") }}</h4>
                 <p>{{ current?.stats.totalTimeMs ?? 0 }} ms</p>
               </article>
               <article>
-                <h4>峰值内存</h4>
+                <h4>{{ t("plan.stats.memory") }}</h4>
                 <p>{{ current?.stats.totalMemoryMB ?? 0 }} MB</p>
               </article>
               <article>
-                <h4>来源</h4>
-                <p>{{ current?.summary.source === "upload" ? "手动导入" : "数据库连接" }}</p>
+                <h4>{{ t("plan.meta.sourceLabel") }}</h4>
+                <p>
+                  {{
+                    current?.summary.source === "upload"
+                      ? t("plan.meta.sourceUpload")
+                      : t("plan.meta.sourceConnection")
+                  }}
+                </p>
               </article>
             </div>
           </section>

@@ -2,9 +2,11 @@
 import PlanHistoryPanel from "@/components/PlanHistoryPanel.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 
 const planStore = usePlanStore();
 const history = computed(() => planStore.historySummaries);
+const { t } = useI18n();
 
 onMounted(() => {
   planStore.bootstrap();
@@ -15,18 +17,18 @@ onMounted(() => {
   <div class="history-page">
     <section class="history-hero glass-panel">
       <div>
-        <p class="eyebrow">History</p>
-        <h1>执行计划历史</h1>
-        <p class="subtitle">集中查看、检索并管理最近导入的执行计划。</p>
+        <p class="eyebrow">{{ t("history.hero.eyebrow") }}</p>
+        <h1>{{ t("history.hero.title") }}</h1>
+        <p class="subtitle">{{ t("history.hero.subtitle") }}</p>
       </div>
       <div class="stats">
         <div>
-          <span>总条目</span>
+          <span>{{ t("history.hero.total") }}</span>
           <strong>{{ history.length }}</strong>
         </div>
         <div>
-          <span>最近更新</span>
-          <strong>{{ history[0]?.title ?? "暂无" }}</strong>
+          <span>{{ t("history.hero.latest") }}</span>
+          <strong>{{ history[0]?.title ?? t("history.hero.none") }}</strong>
         </div>
       </div>
     </section>

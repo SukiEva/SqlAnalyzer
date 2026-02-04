@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { PlanSummary } from "@/modules/planModel";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   history: {
@@ -14,6 +15,8 @@ const emit = defineEmits<{
   (e: "delete", id: string): void;
 }>();
 
+const { t } = useI18n();
+
 function select(id: string) {
   emit("select", id);
 }
@@ -26,14 +29,20 @@ function remove(id: string) {
 <template>
   <div class="history-panel">
     <header>
-      <h3>History</h3>
-      <span class="tag">{{ props.history.length }} stored</span>
+      <h3>{{ t("history.panel.title") }}</h3>
+      <span class="tag">
+        {{
+          t("history.panel.count", {
+            count: props.history.length,
+          })
+        }}
+      </span>
     </header>
     <div class="history-list scroll-y">
       <article v-for="entry in props.history" :key="entry.id" class="history-card" @click="select(entry.id)">
         <div class="card-head">
           <p class="history-title">{{ entry.title }}</p>
-          <button class="delete" title="Remove from history" @click.stop="remove(entry.id)">✕</button>
+          <button class="delete" :title="t('history.actions.remove')" @click.stop="remove(entry.id)">✕</button>
         </div>
         <p class="history-meta">
           {{ entry.dialect.toUpperCase() }} ·
@@ -46,7 +55,7 @@ function remove(id: string) {
           <span v-for="tag in entry.tags" :key="tag" class="tag">{{ tag }}</span>
         </p>
       </article>
-      <p v-if="!props.history.length" class="empty">No entries yet</p>
+      <p v-if="!props.history.length" class="empty">{{ t("history.panel.empty") }}</p>
     </div>
   </div>
 </template>

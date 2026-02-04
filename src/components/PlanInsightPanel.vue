@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { PlanInsight } from "@/modules/planModel";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   insights: {
@@ -8,6 +9,8 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const { t } = useI18n();
 
 const severityClass: Record<string, string> = {
   info: "chip-info",
@@ -19,7 +22,7 @@ const severityClass: Record<string, string> = {
 <template>
   <div class="insight-panel">
     <header>
-      <h3>Insights</h3>
+      <h3>{{ t("app.insights") }}</h3>
       <span class="tag">{{ props.insights.length }}</span>
     </header>
     <div class="insight-list scroll-y">
@@ -28,7 +31,7 @@ const severityClass: Record<string, string> = {
         <h4>{{ insight.title }}</h4>
         <p>{{ insight.details }}</p>
       </article>
-      <p v-if="!props.insights.length" class="empty">No heuristics triggered</p>
+      <p v-if="!props.insights.length" class="empty">{{ t("history.panel.empty") }}</p>
     </div>
   </div>
 </template>

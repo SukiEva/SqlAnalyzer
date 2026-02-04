@@ -3,13 +3,15 @@ import { ref, watch } from "vue";
 import type { PlanDialect } from "@/modules/planModel";
 import { parsePlanText } from "@/modules/planParser";
 import { usePlanStore } from "@/stores/planStore";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{ open: boolean }>();
 const emit = defineEmits<{ (e: "close"): void }>();
 
 const planStore = usePlanStore();
+const { t } = useI18n();
 const dialect = ref<PlanDialect>("opengauss");
-const title = ref("Manual import");
+const title = ref("");
 const sqlText = ref("");
 const payload = ref("");
 const error = ref<string | null>(null);
@@ -21,6 +23,8 @@ watch(
       payload.value = "";
       error.value = null;
       sqlText.value = "";
+      title.value = "";
+      dialect.value = "opengauss";
     }
   },
 );
@@ -30,17 +34,22 @@ function close() {
 }
 
 async function submit() {
+  if (!payload.value.trim()) {
+    error.value = t("import.errors.empty");
+    return;
+  }
+  error.value = null;
   try {
     const plan = parsePlanText(payload.value, {
       dialectHint: dialect.value,
-      title: title.value,
+      title: title.value || t("import.defaultTitle"),
       source: "upload",
       sqlText: sqlText.value.trim() ? sqlText.value : undefined,
     });
     await planStore.ingestPlan(plan);
     close();
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Failed to parse plan";
+    error.value = err instanceof Error ? err.message : t("import.errors.parse");
   }
 }
 </script>
@@ -50,32 +59,32 @@ async function submit() {
     <div v-if="props.open" class="modal-backdrop" @click.self="close">
       <div class="modal glass-panel">
         <header>
-          <h3>Import Execution Plan</h3>
-          <button class="ghost" @click="close">Close</button>
+          <h3>{{ t("import.title") }}</h3>
+          <button class="ghost" @click="close">{{ t("import.actions.close") }}</button>
         </header>
         <label class="field">
-          <span>Title</span>
-          <input v-model="title" type="text" />
+          <span>{{ t("import.fields.title") }}</span>
+          <input v-model="title" type="text" :placeholder="t('import.fields.title')" />
         </label>
         <label class="field">
-          <span>SQL (可选)</span>
-          <textarea v-model="sqlText" rows="4" placeholder="粘贴原始 SQL，便于历史分析"></textarea>
-        </label>
-        <label class="field">
-          <span>Dialect</span>
+          <span>{{ t("import.fields.dialect") }}</span>
           <select v-model="dialect">
             <option value="opengauss">openGauss</option>
             <option value="dws">Huawei DWS</option>
           </select>
         </label>
         <label class="field">
-          <span>Plan Text / JSON</span>
-          <textarea v-model="payload" rows="10" placeholder="Paste EXPLAIN PERFORMANCE output here..."></textarea>
+          <span>{{ t("import.fields.sql") }}</span>
+          <textarea v-model="sqlText" rows="4" :placeholder="t('import.placeholders.sql')"></textarea>
+        </label>
+        <label class="field">
+          <span>{{ t("import.fields.plan") }}</span>
+          <textarea v-model="payload" rows="10" :placeholder="t('import.placeholders.plan')"></textarea>
         </label>
         <p v-if="error" class="error">{{ error }}</p>
         <div class="actions">
-          <button class="ghost" @click="close">Cancel</button>
-          <button class="glow" @click="submit">Import</button>
+          <button class="ghost" @click="close">{{ t("import.actions.cancel") }}</button>
+          <button class="glow" @click="submit">{{ t("import.actions.confirm") }}</button>
         </div>
       </div>
     </div>

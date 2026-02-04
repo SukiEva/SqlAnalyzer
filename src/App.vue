@@ -14,12 +14,12 @@ const openImport = ref(false);
       <div class="brand-title">{{ t("app.title") }}</div>
       <nav class="nav-links">
         <RouterLink class="nav-link" to="/">{{ t("app.workspace") }}</RouterLink>
-        <RouterLink class="nav-link" to="/history">历史记录</RouterLink>
+        <RouterLink class="nav-link" to="/history">{{ t("app.history") }}</RouterLink>
         <RouterLink class="nav-link" to="/settings">{{ t("app.settings") }}</RouterLink>
       </nav>
       <div class="nav-actions">
         <button class="ghost" @click="openImport = true">{{ t("app.importPlan") }}</button>
-        <button class="glow" disabled title="即将支持">{{ t("app.runExplain") }}</button>
+        <button class="glow" disabled title="Coming soon">{{ t("app.runExplain") }}</button>
       </div>
     </header>
     <main class="router-view">

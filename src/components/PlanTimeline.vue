@@ -2,6 +2,7 @@
 import type { PropType } from "vue";
 import type { PlanNode } from "@/modules/planModel";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   nodes: {
@@ -13,6 +14,8 @@ const props = defineProps({
     default: 1,
   },
 });
+
+const { t } = useI18n();
 
 function flatten(nodes: PlanNode[], acc: PlanNode[] = []): PlanNode[] {
   nodes.forEach((node) => {
@@ -32,8 +35,10 @@ const maxTime = computed(() => {
 <template>
   <div class="timeline">
     <header>
-      <h3>Timeline</h3>
-      <span class="tag">Top {{ segments.length }} nodes</span>
+      <h3>{{ t("plan.tabs.timeline") }}</h3>
+      <span class="tag">
+        {{ t("plan.timeline.topNodes", { count: segments.length }) }}
+      </span>
     </header>
     <div class="timeline-list scroll-y">
       <div v-for="segment in segments" :key="segment.id" class="timeline-row">
@@ -50,7 +55,7 @@ const maxTime = computed(() => {
           ></div>
         </div>
       </div>
-      <p v-if="!segments.length" class="empty">No plan data yet.</p>
+      <p v-if="!segments.length" class="empty">{{ t("plan.timeline.empty") }}</p>
     </div>
   </div>
 </template>
