@@ -70,10 +70,6 @@ onMounted(() => {
         <div class="tab-panels">
           <section v-show="activeTab === 'sql'" class="sql-pane">
             <div class="sql-block">
-              <div class="sql-block__header">
-                <p>{{ t("plan.sql.title") }}</p>
-                <span class="tag">{{ t("plan.sql.badge") }}</span>
-              </div>
               <pre v-if="current?.summary.sqlText" class="sql-code">{{ current?.summary.sqlText }}</pre>
               <p v-else class="empty-state">{{ t("plan.sql.empty") }}</p>
             </div>
@@ -154,15 +150,6 @@ onMounted(() => {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1rem;
-}
-
-.sql-block__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
 }
 
 .sql-code {

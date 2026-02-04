@@ -21,10 +21,6 @@ const severityClass: Record<string, string> = {
 
 <template>
   <div class="insight-panel">
-    <header>
-      <h3>{{ t("app.insights") }}</h3>
-      <span class="tag">{{ props.insights.length }}</span>
-    </header>
     <div class="insight-list scroll-y">
       <article v-for="insight in props.insights" :key="insight.id" class="insight-card">
         <span class="chip" :class="severityClass[insight.severity]">{{ insight.severity }}</span>
@@ -41,11 +37,6 @@ const severityClass: Record<string, string> = {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
 }
 
 .insight-list {

@@ -34,12 +34,9 @@ const maxTime = computed(() => {
 
 <template>
   <div class="timeline">
-    <header>
-      <h3>{{ t("plan.tabs.timeline") }}</h3>
-      <span class="tag">
-        {{ t("plan.timeline.topNodes", { count: segments.length }) }}
-      </span>
-    </header>
+    <div class="timeline-meta">
+      <p>{{ t("plan.timeline.topNodes", { count: segments.length }) }}</p>
+    </div>
     <div class="timeline-list scroll-y">
       <div v-for="segment in segments" :key="segment.id" class="timeline-row">
         <div class="label">
@@ -69,6 +66,17 @@ const maxTime = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.timeline-meta {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.timeline-meta p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
 }
 
 .timeline-list {
