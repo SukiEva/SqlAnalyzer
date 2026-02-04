@@ -294,11 +294,6 @@ onBeforeUnmount(() => {
 
 .nodes .node {
   cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-.nodes .node:hover {
-  transform: scale(1.02) translate(0, 0);
 }
 
 rect {
