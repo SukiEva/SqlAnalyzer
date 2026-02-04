@@ -27,7 +27,7 @@ const messages = {
       tabs: {
         sql: "SQL Context",
         structure: "Plan Tree",
-        canvas: "Canvas",
+        canvas: "Visualization",
         timeline: "Timeline",
         insights: "Insights",
       },
@@ -61,6 +61,8 @@ const messages = {
         reset: "Reset view",
         slow: "Slow",
         hot: "Hot",
+        expand: "Show details",
+        collapse: "Hide details",
       },
       details: {
         title: "Node details",
@@ -143,7 +145,7 @@ const messages = {
       tabs: {
         sql: "SQL 上下文",
         structure: "执行计划",
-        canvas: "可视化画布",
+        canvas: "可视化",
         timeline: "时间线",
         insights: "洞察",
       },
@@ -177,6 +179,8 @@ const messages = {
         reset: "重置视角",
         slow: "低耗时",
         hot: "热点",
+        expand: "展开详情",
+        collapse: "收起详情",
       },
       details: {
         title: "节点详情",

@@ -5,6 +5,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { hierarchy, tree } from "d3-hierarchy";
 import { usePlanStore } from "@/stores/planStore";
 import { useI18n } from "vue-i18n";
+import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
 
 interface LayoutNode {
   id: string;
@@ -38,6 +39,8 @@ const transform = ref({ x: 40, y: 40, scale: 1 });
 const dragging = ref(false);
 const dragOrigin = ref({ x: 0, y: 0 });
 const transformOrigin = ref({ x: 0, y: 0 });
+const detailOpen = ref(false);
+const focusedNode = computed(() => planStore.focusedNode);
 
 const layout = computed<LayoutResult>(() => {
   if (!props.nodes.length) {
@@ -119,7 +122,10 @@ const contentStyle = computed(() => ({
 
 watch(
   () => props.nodes.map((node) => node.id).join(","),
-  () => resetView(),
+  () => {
+    resetView();
+    detailOpen.value = false;
+  },
 );
 
 function resetView() {
@@ -147,26 +153,18 @@ function linkPath(link: { source: LayoutNode; target: LayoutNode }) {
   return `M${startX},${startY} C${midX},${startY} ${midX},${endY} ${endX},${endY}`;
 }
 
-function handleHover(node: LayoutNode, event: MouseEvent) {
+function handleHover(node: LayoutNode) {
   planStore.highlightNode(node.id);
-  if (!node.node.docKey) return;
-  const target = event.currentTarget as SVGGElement | null;
-  const rect = target?.getBoundingClientRect();
-  if (!rect) return;
-  planStore.showDocTooltip(node.node.docKey, {
-    x: rect.right + 12,
-    y: rect.top + window.scrollY,
-  });
 }
 
 function handleLeave() {
   planStore.highlightNode(null);
-  planStore.scheduleDocTooltipHide();
 }
 
 function handleSelect(node: LayoutNode) {
   planStore.focusNode(node.id);
   planStore.highlightNode(node.id);
+  detailOpen.value = true;
 }
 
 function handleWheel(event: WheelEvent) {
@@ -238,7 +236,7 @@ onBeforeUnmount(() => {
               :key="node.id"
               class="node"
               :transform="`translate(${node.y - 120}, ${node.x - 45})`"
-              @mouseenter="handleHover(node, $event as MouseEvent)"
+              @mouseenter="handleHover(node)"
               @mouseleave="handleLeave"
               @pointerdown.stop
               @click="handleSelect(node)"
@@ -254,6 +252,14 @@ onBeforeUnmount(() => {
         </svg>
       </div>
       <p v-else class="empty">{{ t("plan.graph.empty") }}</p>
+      <div class="drawer" :class="{ open: detailOpen }" @pointerdown.stop>
+        <button class="drawer-toggle" @click="detailOpen = !detailOpen">
+          {{ detailOpen ? t("plan.graph.collapse") : t("plan.graph.expand") }}
+        </button>
+        <div v-if="detailOpen" class="drawer-body">
+          <PlanNodeDetails :node="focusedNode" />
+        </div>
+      </div>
     </div>
     <div class="graph-footer">
       <div class="legend">
@@ -399,3 +405,41 @@ text {
   padding: 0.15rem 0.8rem;
 }
 </style>
+.drawer {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 320px;
+  max-width: 80%;
+  background: rgba(5, 9, 20, 0.95);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(5, 9, 20, 0.65);
+  transform: translateX(calc(100% - 56px));
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-toggle {
+  align-self: flex-start;
+  margin: 0.5rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.drawer-body {
+  padding: 0.25rem 1rem 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
