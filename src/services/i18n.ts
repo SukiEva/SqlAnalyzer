@@ -26,6 +26,7 @@ const messages = {
       emptyState: "Import a plan to begin.",
       tabs: {
         structure: "Plan Tree",
+        sql: "SQL Context",
         timeline: "Timeline",
         metrics: "Metrics",
       },
@@ -37,6 +38,7 @@ const messages = {
       sql: {
         title: "Associated SQL",
         badge: "Context",
+        empty: "No SQL text was attached to this plan.",
       },
       node: {
         rows: "Rows",
@@ -124,6 +126,7 @@ const messages = {
       emptyState: "导入执行计划以开始分析",
       tabs: {
         structure: "执行计划",
+        sql: "SQL 上下文",
         timeline: "时间线",
         metrics: "指标概览",
       },
@@ -135,6 +138,7 @@ const messages = {
       sql: {
         title: "关联 SQL",
         badge: "上下文",
+        empty: "该计划没有附带 SQL 文本",
       },
       node: {
         rows: "行数",

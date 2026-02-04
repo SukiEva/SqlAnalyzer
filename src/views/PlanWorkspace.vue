@@ -15,6 +15,7 @@ const insights = computed(() => planStore.insights);
 const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
   { id: "plan", label: t("plan.tabs.structure") },
+  { id: "sql", label: t("plan.tabs.sql") },
   { id: "timeline", label: t("plan.tabs.timeline") },
   { id: "meta", label: t("plan.tabs.metrics") },
 ]);
@@ -68,14 +69,17 @@ onMounted(() => {
         </div>
         <div class="tab-panels">
           <section v-show="activeTab === 'plan'" class="plan-pane">
-            <div class="sql-block" v-if="current?.summary.sqlText">
+            <PlanTree :nodes="nodes" />
+          </section>
+          <section v-show="activeTab === 'sql'" class="sql-pane">
+            <div class="sql-block">
               <div class="sql-block__header">
                 <p>{{ t("plan.sql.title") }}</p>
                 <span class="tag">{{ t("plan.sql.badge") }}</span>
               </div>
-              <pre class="sql-code">{{ current?.summary.sqlText }}</pre>
+              <pre v-if="current?.summary.sqlText" class="sql-code">{{ current?.summary.sqlText }}</pre>
+              <p v-else class="empty-state">{{ t("plan.sql.empty") }}</p>
             </div>
-            <PlanTree :nodes="nodes" />
           </section>
           <section v-show="activeTab === 'timeline'" class="timeline-pane">
             <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
@@ -203,6 +207,12 @@ onMounted(() => {
   white-space: pre-wrap;
 }
 
+.empty-state {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
 .tab-strip {
   display: inline-flex;
   gap: 0.5rem;
@@ -230,6 +240,7 @@ onMounted(() => {
 }
 
 .plan-pane,
+.sql-pane,
 .timeline-pane,
 .meta-pane {
   border: 1px solid var(--border);
@@ -244,6 +255,12 @@ onMounted(() => {
 }
 
 .plan-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sql-pane {
   display: flex;
   flex-direction: column;
   gap: 1rem;
