@@ -184,7 +184,7 @@ h3 {
 dl {
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(90px, 150px) minmax(0, 1fr);
+  grid-template-columns: minmax(80px, 120px) minmax(0, 1fr);
   gap: 0.45rem 0.8rem;
 }
 
