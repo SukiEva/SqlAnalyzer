@@ -41,22 +41,22 @@ const propertyEntries = computed(() =>
     <p class="eyebrow">{{ t("plan.details.title") }}</p>
     <template v-if="node">
       <div class="node-header">
-        <div>
+        <div class="title-stack">
           <h3>{{ node.name }}</h3>
           <p class="subtitle">{{ t("plan.details.nodeId") }} #{{ node.id }}</p>
-        </div>
-        <div class="ratio-pill" v-if="estimateRatio">
-          <div class="ratio-item">
-            <span>{{ t("plan.details.actualRows") }}</span>
-            <strong>{{ node.metrics.actualRows.toLocaleString() }}</strong>
-          </div>
-          <div class="ratio-item">
-            <span>{{ t("plan.details.estimatedRows") }}</span>
-            <strong>{{ node.metrics.estimatedRows.toLocaleString() }}</strong>
-          </div>
-          <div class="ratio-item">
-            <span>{{ t("plan.details.estimateRatio") }}</span>
-            <strong>x{{ estimateRatio.toFixed(2) }}</strong>
+          <div class="ratio-pill" v-if="estimateRatio">
+            <div class="ratio-item">
+              <span>{{ t("plan.details.actualRows") }}</span>
+              <strong>{{ node.metrics.actualRows.toLocaleString() }}</strong>
+            </div>
+            <div class="ratio-item">
+              <span>{{ t("plan.details.estimatedRows") }}</span>
+              <strong>{{ node.metrics.estimatedRows.toLocaleString() }}</strong>
+            </div>
+            <div class="ratio-item">
+              <span>{{ t("plan.details.estimateRatio") }}</span>
+              <strong>x{{ estimateRatio.toFixed(2) }}</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -99,9 +99,15 @@ const propertyEntries = computed(() =>
 
 .node-header {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 0.6rem;
+}
+
+.title-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .eyebrow {
