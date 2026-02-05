@@ -83,31 +83,33 @@ onMounted(() => {
           </button>
         </div>
         <div class="tab-panels">
-          <section v-show="activeTab === 'sql'" class="sql-pane">
-            <div class="sql-block">
-              <pre v-if="current?.summary.sqlText" class="sql-code">{{ current?.summary.sqlText }}</pre>
-              <p v-else class="empty-state">{{ t("plan.sql.empty") }}</p>
-            </div>
-          </section>
-          <section v-show="activeTab === 'plan'" class="plan-pane">
-            <PlanTree :nodes="nodes" />
-          </section>
-          <section v-show="activeTab === 'canvas'" class="canvas-pane">
-            <div class="canvas-layout">
-              <div class="canvas-stage">
-                <PlanGraph :nodes="nodes" />
+          <Transition name="tab-fade" mode="out-in">
+            <section v-if="activeTab === 'sql'" key="sql" class="sql-pane">
+              <div class="sql-block">
+                <pre v-if="current?.summary.sqlText" class="sql-code">{{ current?.summary.sqlText }}</pre>
+                <p v-else class="empty-state">{{ t("plan.sql.empty") }}</p>
               </div>
-              <aside class="canvas-detail glass-panel">
-                <PlanNodeDetails :node="focusedNode" />
-              </aside>
-            </div>
-          </section>
-          <section v-show="activeTab === 'timeline'" class="timeline-pane">
-            <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
-          </section>
-          <section v-show="activeTab === 'insights'" class="insights-pane">
-            <PlanInsightPanel :execution="current" />
-          </section>
+            </section>
+            <section v-else-if="activeTab === 'plan'" key="plan" class="plan-pane">
+              <PlanTree :nodes="nodes" />
+            </section>
+            <section v-else-if="activeTab === 'canvas'" key="canvas" class="canvas-pane">
+              <div class="canvas-layout">
+                <div class="canvas-stage">
+                  <PlanGraph :nodes="nodes" />
+                </div>
+                <aside class="canvas-detail glass-panel">
+                  <PlanNodeDetails :node="focusedNode" />
+                </aside>
+              </div>
+            </section>
+            <section v-else-if="activeTab === 'timeline'" key="timeline" class="timeline-pane">
+              <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
+            </section>
+            <section v-else key="insights" class="insights-pane">
+              <PlanInsightPanel :execution="current" />
+            </section>
+          </Transition>
         </div>
       </div>
     </section>
@@ -257,6 +259,21 @@ onMounted(() => {
   color: var(--text-primary);
   background: var(--bg-panel);
   box-shadow: var(--shadow-card);
+}
+
+.tab:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.tab-fade-enter-active,
+.tab-fade-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.tab-fade-enter-from,
+.tab-fade-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
 }
 
 .plan-pane,

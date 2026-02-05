@@ -44,6 +44,7 @@ a {
 
 button {
   font-family: inherit;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .app-shell {
@@ -94,6 +95,10 @@ button {
   box-shadow: var(--shadow-card);
 }
 
+.nav-link:active {
+  transform: scale(0.98);
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
@@ -117,6 +122,10 @@ button {
   border-color: var(--accent-1);
   box-shadow: var(--shadow-soft);
   transform: translateY(-1px);
+}
+
+.icon-link:active {
+  transform: translateY(0) scale(0.96);
 }
 
 .icon-link svg {
@@ -160,6 +169,10 @@ button:disabled {
   box-shadow: none;
 }
 
+button:active {
+  transform: translateY(1px) scale(0.98);
+}
+
 button.ghost {
   border-radius: 999px;
   border: 1px solid var(--border);
@@ -175,6 +188,10 @@ button.ghost {
 button.ghost:hover {
   border-color: var(--accent-1);
   box-shadow: 0 10px 16px rgba(31, 42, 68, 0.1);
+}
+
+button.ghost:active {
+  transform: translateY(1px) scale(0.98);
 }
 
 .tag {
