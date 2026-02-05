@@ -36,31 +36,17 @@ onMounted(() => {
     <PlanNodeTooltip />
     <section class="workspace-body">
       <div class="workspace-main glass-panel">
-        <div class="workspace-toolbar">
-          <div>
-            <p class="workspace-title">{{ t("app.workspace") }}</p>
-            <p class="workspace-subtitle">
-              <template v-if="current">
-                {{ t("plan.meta.sourceLabel") }} ·
-                {{
-                  current.summary.source === "connection"
-                    ? t("plan.meta.sourceConnection")
-                    : t("plan.meta.sourceUpload")
-                }}
-              </template>
-              <template v-else>{{ t("plan.emptyState") }}</template>
-            </p>
-          </div>
-          <button class="glow" @click="openImport = true">{{ t("app.importPlan") }}</button>
-        </div>
         <template v-if="current">
           <div class="plan-meta">
-            <div>
+            <div class="plan-info">
               <p class="plan-title">{{ current.summary.title }}</p>
               <p class="plan-subtitle">
                 {{ current.summary.dialect.toUpperCase() }} ·
                 {{ new Date(current.summary.capturedAt).toLocaleString() }}
               </p>
+            </div>
+            <div class="plan-actions">
+              <button class="ghost" @click="openImport = true">{{ t("app.importPlan") }}</button>
             </div>
             <div class="plan-stats">
               <div>
@@ -78,6 +64,13 @@ onMounted(() => {
             </div>
           </div>
         </template>
+        <div v-else class="plan-empty">
+          <div>
+            <p class="plan-title">{{ t("app.workspace") }}</p>
+            <p class="plan-subtitle">{{ t("plan.emptyState") }}</p>
+          </div>
+          <button class="glow" @click="openImport = true">{{ t("app.importPlan") }}</button>
+        </div>
         <div class="tab-strip">
           <button
             v-for="tab in tabs"
@@ -142,29 +135,6 @@ onMounted(() => {
   gap: 1.5rem;
 }
 
-.workspace-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 0.85rem 1.1rem;
-}
-
-.workspace-title {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.workspace-subtitle {
-  margin: 0.2rem 0 0;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
 .plan-meta {
   display: flex;
   align-items: center;
@@ -172,6 +142,15 @@ onMounted(() => {
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
   gap: 1.5rem;
+}
+
+.plan-info {
+  flex: 1;
+}
+
+.plan-actions {
+  display: flex;
+  align-items: center;
 }
 
 .plan-title {
@@ -183,6 +162,27 @@ onMounted(() => {
 .plan-subtitle {
   margin: 0;
   color: var(--text-secondary);
+}
+
+.plan-empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.1rem 1.2rem;
+  border-radius: 18px;
+  border: 1px dashed var(--border);
+  background: var(--bg-soft);
+}
+
+.plan-empty .plan-title {
+  font-size: 1.05rem;
+}
+
+.plan-empty .plan-subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
 .plan-stats {
