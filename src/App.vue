@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { ref } from "vue";
-import PlanImportModal from "@/components/PlanImportModal.vue";
 
 const { t } = useI18n();
-const openImport = ref(false);
 </script>
 
 <template>
@@ -24,13 +21,10 @@ const openImport = ref(false);
             />
           </svg>
         </RouterLink>
-        <button class="ghost" @click="openImport = true">{{ t("app.importPlan") }}</button>
-        <button class="glow" disabled title="Coming soon">{{ t("app.runExplain") }}</button>
       </div>
     </header>
     <main class="router-view">
       <RouterView />
     </main>
-    <PlanImportModal :open="openImport" @close="openImport = false" />
   </div>
 </template>

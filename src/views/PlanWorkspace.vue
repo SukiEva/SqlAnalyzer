@@ -5,6 +5,7 @@ import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
 import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
+import PlanImportModal from "@/components/PlanImportModal.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -23,6 +24,7 @@ const tabs = computed(() => [
   { id: "insights", label: t("plan.tabs.insights") },
 ]);
 const activeTab = ref("sql");
+const openImport = ref(false);
 
 onMounted(() => {
   planStore.bootstrap();
@@ -34,6 +36,23 @@ onMounted(() => {
     <PlanNodeTooltip />
     <section class="workspace-body">
       <div class="workspace-main glass-panel">
+        <div class="workspace-toolbar">
+          <div>
+            <p class="workspace-title">{{ t("app.workspace") }}</p>
+            <p class="workspace-subtitle">
+              <template v-if="current">
+                {{ t("plan.meta.sourceLabel") }} ·
+                {{
+                  current.summary.source === "connection"
+                    ? t("plan.meta.sourceConnection")
+                    : t("plan.meta.sourceUpload")
+                }}
+              </template>
+              <template v-else>{{ t("plan.emptyState") }}</template>
+            </p>
+          </div>
+          <button class="glow" @click="openImport = true">{{ t("app.importPlan") }}</button>
+        </div>
         <template v-if="current">
           <div class="plan-meta">
             <div>
@@ -99,6 +118,7 @@ onMounted(() => {
         </div>
       </div>
     </section>
+    <PlanImportModal :open="openImport" @close="openImport = false" />
   </div>
 </template>
 
@@ -120,6 +140,29 @@ onMounted(() => {
   flex-direction: column;
   padding: 1.75rem;
   gap: 1.5rem;
+}
+
+.workspace-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 0.85rem 1.1rem;
+}
+
+.workspace-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.workspace-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .plan-meta {
