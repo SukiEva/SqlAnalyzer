@@ -32,10 +32,10 @@ const { t } = useI18n();
 
 <style scoped>
 .plan-tree {
-  border-radius: 16px;
+  border-radius: 18px;
   border: 1px solid var(--border);
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.02);
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-soft);
 }
 
 .empty {

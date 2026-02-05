@@ -55,14 +55,16 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   gap: 2rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 139, 77, 0.08));
+  border: 1px solid var(--border);
 }
 
 .eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   font-size: 0.75rem;
   margin: 0;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 h1 {
@@ -81,7 +83,7 @@ h1 {
 
 .stats span {
   display: block;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 

@@ -59,10 +59,10 @@ const maxTime = computed(() => {
 
 <style scoped>
 .timeline {
-  padding: 0.5rem 0.75rem 0.75rem;
-  border-radius: 12px;
+  padding: 0.75rem 1rem 1rem;
+  border-radius: 18px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-soft);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -77,7 +77,7 @@ const maxTime = computed(() => {
 .timeline-meta p {
   margin: 0;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 .timeline-list {
@@ -101,7 +101,7 @@ const maxTime = computed(() => {
 
 .bar {
   height: 6px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-muted);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -109,7 +109,7 @@ const maxTime = computed(() => {
 .fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
 }
 
 .empty {

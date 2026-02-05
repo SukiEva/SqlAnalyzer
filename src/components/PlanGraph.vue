@@ -134,7 +134,7 @@ function runtimeColor(ratio: number) {
   const startHue = 210;
   const endHue = 12;
   const hue = startHue + (endHue - startHue) * ratio;
-  const lightness = 60 - ratio * 18;
+  const lightness = 72 - ratio * 18;
   return `hsl(${hue}, 75%, ${lightness}%)`;
 }
 
@@ -263,9 +263,11 @@ onBeforeUnmount(() => {
   position: relative;
   min-height: 460px;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 20px;
   border: 1px solid var(--border);
-  background: rgba(1, 8, 22, 0.85);
+  background: var(--bg-soft);
+  background-image: radial-gradient(rgba(31, 42, 68, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
   cursor: grab;
 }
 
@@ -287,9 +289,9 @@ onBeforeUnmount(() => {
 
 .links .link-path {
   fill: none;
-  stroke-width: 3;
-  opacity: 0.45;
-  filter: drop-shadow(0 8px 16px rgba(5, 9, 20, 0.45));
+  stroke-width: 2.5;
+  opacity: 0.35;
+  filter: drop-shadow(0 6px 12px rgba(31, 42, 68, 0.2));
 }
 
 .nodes .node {
@@ -299,16 +301,15 @@ onBeforeUnmount(() => {
 rect {
   width: 240px;
   height: 90px;
-  rx: 18px;
-  ry: 18px;
-  fill: rgba(75, 123, 236, 0.2);
-  stroke: rgba(255, 255, 255, 0.1);
+  rx: 20px;
+  ry: 20px;
+  stroke: rgba(31, 42, 68, 0.12);
   stroke-width: 1px;
-  filter: drop-shadow(0 25px 40px rgba(5, 9, 20, 0.65));
+  filter: drop-shadow(0 18px 30px rgba(31, 42, 68, 0.12));
 }
 
 .nodes .node:hover rect {
-  stroke: rgba(255, 255, 255, 0.65);
+  stroke: rgba(31, 42, 68, 0.4);
 }
 
 text {
@@ -317,14 +318,14 @@ text {
 
 .label {
   font-size: 1rem;
-  font-weight: 600;
-  fill: var(--text-primary);
+  font-weight: 700;
+  fill: #0f172a;
   transform: translate(20px, 36px);
 }
 
 .meta {
   font-size: 0.78rem;
-  fill: var(--text-secondary);
+  fill: rgba(15, 23, 42, 0.7);
   transform: translate(20px, 60px);
 }
 
@@ -363,7 +364,7 @@ text {
   width: 150px;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #4b7bec, #50e3c2, #f5a524, #ff5c8d);
+  background: linear-gradient(90deg, #3b82f6, #38bdf8, #ff8b4d, #ef476f);
 }
 
 .hint {

@@ -45,10 +45,10 @@ const tooltip = computed(() => {
   z-index: 999;
   width: 280px;
   padding: 0.9rem;
-  border-radius: 12px;
-  background: rgba(5, 9, 20, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 12px 40px rgba(5, 9, 20, 0.6);
+  border-radius: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   color: var(--text-primary);
 }
 
@@ -76,7 +76,7 @@ li {
 
 a {
   font-size: 0.75rem;
-  color: var(--accent-2);
+  color: var(--accent-1);
   text-decoration: none;
 }
 </style>

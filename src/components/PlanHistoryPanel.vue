@@ -78,16 +78,17 @@ header {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .history-card {
-  padding: 0.75rem;
-  border-radius: 12px;
+  padding: 0.85rem;
+  border-radius: 16px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .card-head {
@@ -98,6 +99,8 @@ header {
 
 .history-card:hover {
   border-color: var(--accent-1);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
 }
 
 .history-title {
@@ -108,7 +111,7 @@ header {
 .delete {
   background: transparent;
   border: none;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 0.85rem;
 }
@@ -123,7 +126,7 @@ header {
 .history-meta {
   margin: 0.25rem 0 0;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 .history-sql {

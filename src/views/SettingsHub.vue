@@ -42,9 +42,10 @@ watch(language, (val) => {
 
 .pref-card {
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-soft);
+  box-shadow: var(--shadow-card);
 }
 
 header {
@@ -68,10 +69,11 @@ p {
 }
 
 select {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.4rem 0.8rem;
+  padding: 0.45rem 0.85rem;
   color: var(--text-primary);
+  box-shadow: 0 6px 12px rgba(31, 42, 68, 0.08);
 }
 </style>

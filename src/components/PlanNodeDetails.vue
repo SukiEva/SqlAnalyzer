@@ -90,7 +90,7 @@ const metrics = computed(() => {
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 0.65rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 h3 {
@@ -112,14 +112,15 @@ h3 {
 .metric {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.65rem;
+  background: var(--bg-soft);
 }
 
 .metric span {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 .metric strong {
@@ -130,7 +131,7 @@ h3 {
 .warnings h4 {
   margin: 0 0 0.35rem;
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -145,7 +146,7 @@ dl {
 dt {
   margin: 0;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   text-transform: uppercase;
 }
 
@@ -158,14 +159,14 @@ dd {
 .warnings ul {
   margin: 0;
   padding-left: 1.1rem;
-  color: var(--warn);
+  color: #b45309;
   font-size: 0.85rem;
 }
 
 .doc-link {
   text-decoration: none;
   font-size: 0.8rem;
-  color: var(--accent-2);
+  color: var(--accent-1);
 }
 
 .empty {

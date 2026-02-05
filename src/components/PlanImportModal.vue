@@ -95,7 +95,7 @@ async function submit() {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(5, 9, 20, 0.72);
+  background: rgba(31, 42, 68, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,6 +109,7 @@ async function submit() {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  box-shadow: var(--shadow);
 }
 
 header {
@@ -126,12 +127,13 @@ header {
 input,
 select,
 textarea {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-panel);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.6rem;
+  border-radius: 12px;
+  padding: 0.65rem;
   color: var(--text-primary);
   font-family: inherit;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
 textarea {
@@ -146,7 +148,7 @@ textarea {
 }
 
 .error {
-  color: var(--critical);
+  color: #be123c;
   margin: 0;
 }
 </style>

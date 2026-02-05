@@ -42,14 +42,15 @@ const severityClass: Record<string, string> = {
 .insight-list {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.9rem;
 }
 
 .insight-card {
-  padding: 0.85rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 0.95rem;
+  border-radius: 16px;
+  background: var(--bg-panel);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 h4 {
@@ -65,25 +66,25 @@ p {
 .chip {
   display: inline-flex;
   font-size: 0.7rem;
-  padding: 0.2rem 0.6rem;
+  padding: 0.2rem 0.65rem;
   border-radius: 999px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .chip-info {
-  background: rgba(75, 208, 255, 0.2);
-  color: #4bd0ff;
+  background: rgba(56, 189, 248, 0.2);
+  color: #0ea5e9;
 }
 
 .chip-warn {
-  background: rgba(255, 200, 87, 0.2);
-  color: var(--warn);
+  background: rgba(245, 158, 11, 0.18);
+  color: #b45309;
 }
 
 .chip-critical {
-  background: rgba(255, 92, 141, 0.25);
-  color: var(--critical);
+  background: rgba(239, 71, 111, 0.2);
+  color: #be123c;
 }
 
 .empty {

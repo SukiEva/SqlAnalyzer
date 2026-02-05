@@ -109,19 +109,20 @@ function handleLeave() {
 
 .node-head {
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.6rem 0.75rem;
+  border-radius: 16px;
+  padding: 0.65rem 0.8rem;
   margin: 0.35rem 0;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-card);
 }
 
 .node-head.highlighted {
   border-color: var(--accent-2);
-  box-shadow: 0 0 12px rgba(80, 227, 194, 0.3);
+  box-shadow: 0 12px 24px rgba(255, 139, 77, 0.18);
 }
 
 .node-head.warn {
@@ -134,12 +135,13 @@ function handleLeave() {
 
 .collapse {
   border: none;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-muted);
   color: var(--text-primary);
   border-radius: 8px;
   width: 26px;
   height: 26px;
   cursor: pointer;
+  font-weight: 700;
 }
 
 .title {
@@ -149,7 +151,7 @@ function handleLeave() {
 
 .subtitle {
   margin: 0.1rem 0 0;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 0.78rem;
 }
 
@@ -187,7 +189,7 @@ function handleLeave() {
 }
 
 .children {
-  border-left: 1px dashed rgba(255, 255, 255, 0.2);
+  border-left: 1px dashed var(--border);
   margin-left: 0.75rem;
   padding-left: 0.75rem;
 }

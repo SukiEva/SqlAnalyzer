@@ -119,8 +119,8 @@ onMounted(() => {
 .workspace-main {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
-  gap: 1.25rem;
+  padding: 1.75rem;
+  gap: 1.5rem;
 }
 
 .plan-meta {
@@ -128,13 +128,14 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 0.75rem;
+  padding-bottom: 1rem;
+  gap: 1.5rem;
 }
 
 .plan-title {
   margin: 0;
   font-size: 1.35rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .plan-subtitle {
@@ -149,6 +150,14 @@ onMounted(() => {
   text-align: right;
 }
 
+.plan-stats > div {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.5rem 0.75rem;
+  min-width: 110px;
+}
+
 .plan-stat-label {
   display: block;
   font-size: 0.75rem;
@@ -160,10 +169,10 @@ onMounted(() => {
 }
 
 .sql-block {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-soft);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1rem;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
 }
 
 .sql-code {
@@ -182,24 +191,30 @@ onMounted(() => {
 
 .tab-strip {
   display: inline-flex;
-  gap: 0.5rem;
+  gap: 0.35rem;
   margin-top: 0.25rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
 }
 
 .tab {
   border: 1px solid transparent;
   border-radius: 999px;
-  padding: 0.35rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  padding: 0.35rem 1.1rem;
+  background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  font-weight: 600;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tab.active {
-  border-color: var(--accent-1);
+  border-color: transparent;
   color: var(--text-primary);
-  background: rgba(75, 123, 236, 0.2);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-card);
 }
 
 .plan-pane,
