@@ -291,10 +291,20 @@ onBeforeUnmount(() => {
 
 .analysis-card li {
   margin-bottom: 0.5rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .analysis-card a {
   color: var(--accent-1);
+  display: inline-block;
+  max-width: 100%;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.analysis-card li p {
+  margin: 0.35rem 0 0;
 }
 
 .analysis-item {
