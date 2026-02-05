@@ -234,11 +234,15 @@ onBeforeUnmount(() => {
               @click="handleSelect(node)"
             >
               <rect :fill="runtimeColor(node.runtimeRatio)" />
-              <text class="label">{{ node.name }}</text>
-              <text class="meta">
-                {{ node.node.metrics.actualTimeMs }} ms · {{ t("plan.node.rows") }}
-                {{ node.node.metrics.actualRows.toLocaleString() }}
-              </text>
+              <foreignObject class="node-fo" width="240" height="90">
+                <div class="node-contents" xmlns="http://www.w3.org/1999/xhtml">
+                  <p class="label">{{ node.name }}</p>
+                  <p class="meta">
+                    {{ node.node.metrics.actualTimeMs }} ms · {{ t("plan.node.rows") }}
+                    {{ node.node.metrics.actualRows.toLocaleString() }}
+                  </p>
+                </div>
+              </foreignObject>
             </g>
           </g>
         </svg>
@@ -312,21 +316,36 @@ rect {
   stroke: rgba(31, 42, 68, 0.4);
 }
 
-text {
+.node-contents {
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem 1.1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
   pointer-events: none;
 }
 
 .label {
+  margin: 0;
   font-size: 1rem;
   font-weight: 700;
-  fill: #0f172a;
-  transform: translate(20px, 36px);
+  color: #0f172a;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .meta {
+  margin: 0;
   font-size: 0.78rem;
-  fill: rgba(15, 23, 42, 0.7);
-  transform: translate(20px, 60px);
+  color: rgba(15, 23, 42, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .empty {
