@@ -17,21 +17,55 @@ jobs:
       tag: ${{ steps.release.outputs.tag }}
       version: ${{ steps.version.outputs.version }}
       release_exists: ${{ steps.release.outputs.release_exists }}
+      version_changed: ${{ steps.version_changed.outputs.version_changed }}
       should_build: ${{ steps.release.outputs.should_build }}
       release_enabled: ${{ steps.release.outputs.release_enabled }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Read version
         id: version
         run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - name: Check version changed
+        id: version_changed
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.before }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base_sha="$PR_BASE_SHA"
+          else
+            base_sha="$BASE_SHA"
+          fi
+          if [ -z "$base_sha" ]; then
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          base_json=$(git show "$base_sha:package.json" 2>/dev/null || true)
+          if [ -z "$base_json" ]; then
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          base_version=$(node -p "JSON.parse(process.argv[1]).version" "$base_json")
+          head_version=$(node -p "require('./package.json').version")
+          if [ "$base_version" = "$head_version" ]; then
+            echo "version_changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Ensure release
         id: release
         uses: actions/github-script@v7
         env:
           VERSION: ${{ steps.version.outputs.version }}
+          VERSION_CHANGED: ${{ steps.version_changed.outputs.version_changed }}
         with:
           script: |
             const tag = `v${process.env.VERSION}`;
@@ -50,7 +84,9 @@ jobs:
             }
             core.setOutput("tag", tag);
             core.setOutput("release_exists", release ? "true" : "false");
-            core.setOutput("should_build", release ? "false" : "true");
+            const versionChanged = process.env.VERSION_CHANGED === "true";
+            const shouldBuild = versionChanged && !release;
+            core.setOutput("should_build", shouldBuild ? "true" : "false");
             core.setOutput("release_enabled", releaseEnabled ? "true" : "false");
 
   create-release:
