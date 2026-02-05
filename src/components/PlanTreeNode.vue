@@ -158,9 +158,13 @@ function selectNode() {
 
 .property-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.65rem 0.9rem;
   padding: 0.5rem 0;
+}
+
+.property-grid > div {
+  min-width: 0;
 }
 
 .prop-label {
@@ -173,6 +177,10 @@ function selectNode() {
 .prop-value {
   margin: 0;
   font-family: "JetBrains Mono", monospace;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap;
+  line-height: 1.35;
 }
 
 .children {
