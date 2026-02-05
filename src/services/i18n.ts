@@ -114,9 +114,22 @@ const messages = {
     },
     settings: {
       title: "Control Room",
-      description: "Configure languages, appearance, and data policies.",
+      description: "Manage language, theme, and AI integrations.",
+      tabs: {
+        general: "General",
+        advanced: "Advanced",
+        usage: "Usage",
+        about: "About",
+      },
       language: "Language",
       languageDesc: "Switch UI language",
+      theme: {
+        title: "Appearance",
+        description: "Choose a theme for the interface.",
+        light: "Light",
+        dark: "Dark",
+        system: "System",
+      },
       ai: {
         title: "AI Provider",
         description: "Connect an OpenAI-compatible model for plan analysis.",
@@ -262,9 +275,22 @@ const messages = {
     },
     settings: {
       title: "控制面板",
-      description: "配置语言、样式以及数据策略。",
+      description: "配置语言、主题以及 AI 接入。",
+      tabs: {
+        general: "通用",
+        advanced: "高级",
+        usage: "使用统计",
+        about: "关于",
+      },
       language: "界面语言",
       languageDesc: "切换中英文界面",
+      theme: {
+        title: "外观主题",
+        description: "选择应用的外观主题，立即生效。",
+        light: "浅色",
+        dark: "深色",
+        system: "跟随系统",
+      },
       ai: {
         title: "AI 接入",
         description: "配置 OpenAI 兼容的大模型接口用于分析执行计划。",

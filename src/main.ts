@@ -3,7 +3,10 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import i18n from "./services/i18n";
+import { applyThemePreference, loadThemePreference } from "./services/themeSettings";
 import "./styles/index.css";
+
+applyThemePreference(loadThemePreference());
 
 const app = createApp(App);
 
