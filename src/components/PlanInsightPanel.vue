@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { PlanExecution } from "@/modules/planModel";
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { analyzePlanWithAi, type AiInsightResult } from "@/services/aiInsights";
 import { isAiConfigured, loadAiSettings } from "@/services/aiSettings";
+import { loadInsight, saveInsight } from "@/services/aiInsightStorage";
 
 const props = defineProps({
   execution: {
@@ -23,6 +24,7 @@ interface AnalysisState {
   raw?: string;
   error?: string;
   updatedAt?: string;
+  fromCache?: boolean;
 }
 
 const settings = ref(loadAiSettings());
@@ -41,6 +43,21 @@ function setState(key: string, patch: Partial<AnalysisState>) {
   };
 }
 
+function hydrateFromCache(planId: string) {
+  const stored = loadInsight(planId);
+  if (!stored) {
+    setState(planId, { status: "idle", result: null, raw: undefined, error: undefined, fromCache: false });
+    return;
+  }
+  setState(planId, {
+    status: "done",
+    result: stored.result,
+    raw: stored.raw,
+    updatedAt: stored.updatedAt,
+    fromCache: true,
+  });
+}
+
 async function runAnalysis() {
   if (!props.execution) return;
   const key = props.execution.summary.id;
@@ -53,16 +70,26 @@ async function runAnalysis() {
   setState(key, { status: "loading", error: undefined });
   try {
     const { result, raw } = await analyzePlanWithAi(props.execution, latestSettings, locale.value);
+    if (result) {
+      saveInsight(key, {
+        planId: key,
+        updatedAt: new Date().toISOString(),
+        result,
+        raw,
+      });
+    }
     setState(key, {
       status: "done",
       result,
       raw,
       updatedAt: new Date().toISOString(),
+      fromCache: false,
     });
   } catch (err) {
     setState(key, {
       status: "error",
       error: err instanceof Error ? err.message : t("insights.error"),
+      fromCache: false,
     });
   }
 }
@@ -78,6 +105,15 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("hpv:ai-settings", refreshSettings);
 });
+
+watch(
+  () => props.execution?.summary.id,
+  (planId) => {
+    if (!planId) return;
+    hydrateFromCache(planId);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -104,7 +140,10 @@ onBeforeUnmount(() => {
     <div v-else class="analysis-body">
       <div class="context-hint">
         <span>{{ t("insights.contextHint") }}</span>
-        <span class="model">{{ t("insights.modelLabel") }}: {{ settings.model || "-" }}</span>
+        <span class="model">
+          {{ t("insights.modelLabel") }}: {{ settings.model || "-" }}
+          <span v-if="currentState?.fromCache" class="cache-pill">{{ t("insights.cached") }}</span>
+        </span>
       </div>
 
       <div v-if="currentState?.status === 'loading'" class="loading">
@@ -255,6 +294,19 @@ onBeforeUnmount(() => {
 .context-hint .model {
   font-weight: 600;
   color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cache-pill {
+  display: inline-flex;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 600;
 }
 
 .analysis-grid {

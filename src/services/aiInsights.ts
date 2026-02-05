@@ -313,8 +313,20 @@ export async function analyzePlanWithAi(
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || `HTTP ${response.status}`);
+    const contentType = response.headers.get("content-type") ?? "";
+    let message = `HTTP ${response.status}`;
+    try {
+      if (contentType.includes("application/json")) {
+        const errorPayload = await response.json();
+        message = errorPayload?.error?.message || errorPayload?.message || message;
+      } else {
+        const text = await response.text();
+        if (text) message = text;
+      }
+    } catch (err) {
+      // ignore parsing errors
+    }
+    throw new Error(message);
   }
 
   const data = await response.json();
