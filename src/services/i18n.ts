@@ -73,11 +73,6 @@ const messages = {
         emptyTab: "No details available.",
         tabs: {
           general: "General",
-          io: "I/O",
-          buffers: "Buffers",
-          output: "Output",
-          workers: "Workers",
-          misc: "Misc",
         },
       },
     },
@@ -239,11 +234,6 @@ const messages = {
         emptyTab: "暂无相关字段。",
         tabs: {
           general: "常规",
-          io: "I/O",
-          buffers: "缓冲区",
-          output: "输出",
-          workers: "Workers",
-          misc: "其它",
         },
       },
     },

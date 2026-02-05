@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { PlanNode } from "@/modules/planModel";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps({
@@ -12,17 +12,6 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-
-const activeTab = ref("general");
-
-const tabOptions = computed(() => [
-  { id: "general", label: t("plan.details.tabs.general") },
-  { id: "io", label: t("plan.details.tabs.io") },
-  { id: "buffers", label: t("plan.details.tabs.buffers") },
-  { id: "output", label: t("plan.details.tabs.output") },
-  { id: "workers", label: t("plan.details.tabs.workers") },
-  { id: "misc", label: t("plan.details.tabs.misc") },
-]);
 
 const metrics = computed(() => {
   if (!props.node) return [];
@@ -42,115 +31,9 @@ const estimateRatio = computed(() => {
   return props.node.metrics.actualRows / props.node.metrics.estimatedRows;
 });
 
-const splitProperties = computed(() => {
-  if (!props.node) {
-    return {
-      general: [],
-      io: [],
-      buffers: [],
-      output: [],
-      workers: [],
-      misc: [],
-    } as Record<string, Array<[string, string | number | boolean]>>;
-  }
-  const entries = Object.entries(props.node.properties ?? {});
-  const general: Array<[string, string | number | boolean]> = [];
-  const io: Array<[string, string | number | boolean]> = [];
-  const buffers: Array<[string, string | number | boolean]> = [];
-  const output: Array<[string, string | number | boolean]> = [];
-  const workers: Array<[string, string | number | boolean]> = [];
-  const misc: Array<[string, string | number | boolean]> = [];
-  const outputTokens = [
-    "output",
-    "target",
-    "group key",
-    "sort key",
-    "hash key",
-    "merge key",
-    "distinct",
-    "projection",
-    "order by",
-    "partition by",
-  ];
-  const ioTokens = [
-    "i/o",
-    "io",
-    "read time",
-    "write time",
-    "io time",
-    "disk",
-  ];
-  const bufferTokens = [
-    "buffer",
-    "block",
-    "hit",
-    "dirtied",
-    "written",
-    "read",
-    "temp",
-    "shared",
-    "local",
-    "cache",
-    "reused",
-  ];
-  const workerTokens = ["worker", "parallel", "launch", "planned", "launched", "leader", "gather"];
-  const generalTokens = [
-    "parent",
-    "relationship",
-    "join",
-    "scan",
-    "index",
-    "strategy",
-    "relation",
-    "schema",
-    "alias",
-    "startup",
-    "total",
-    "cost",
-    "rows",
-    "width",
-    "loops",
-    "time",
-    "condition",
-    "filter",
-    "recheck",
-    "heap",
-    "hash",
-    "sort",
-    "group",
-    "aggregate",
-    "strategy",
-    "type",
-  ];
-  entries.forEach(([key, value]) => {
-    const lower = key.toLowerCase();
-    if (outputTokens.some((token) => lower.includes(token))) {
-      output.push([key, value]);
-      return;
-    }
-    const ioMatch =
-      ioTokens.some((token) => lower.includes(token)) &&
-      (lower.includes("time") || lower.includes("i/o") || lower.includes("io"));
-    if (ioMatch || (lower.includes("time") && (lower.includes("read") || lower.includes("write")))) {
-      io.push([key, value]);
-      return;
-    }
-    if (bufferTokens.some((token) => lower.includes(token))) {
-      buffers.push([key, value]);
-      return;
-    }
-    if (workerTokens.some((token) => lower.includes(token))) {
-      workers.push([key, value]);
-      return;
-    }
-    if (generalTokens.some((token) => lower.includes(token))) {
-      general.push([key, value]);
-      return;
-    }
-    misc.push([key, value]);
-  });
-  return { general, io, buffers, output, workers, misc };
-});
+const propertyEntries = computed(() =>
+  props.node ? Object.entries(props.node.properties ?? {}) : [],
+);
 </script>
 
 <template>
@@ -173,59 +56,13 @@ const splitProperties = computed(() => {
           <strong>{{ item.value }}</strong>
         </div>
       </div>
-      <div class="tab-row" v-if="Object.keys(node.properties ?? {}).length">
-        <button
-          v-for="tab in tabOptions"
-          :key="tab.id"
-          class="tab"
-          :class="{ active: activeTab === tab.id }"
-          @click="activeTab = tab.id"
-        >
-          {{ tab.label }}
-        </button>
-      </div>
       <section class="properties" v-if="Object.keys(node.properties ?? {}).length">
-        <dl v-if="activeTab === 'general'">
-          <template v-for="([key, value], idx) in splitProperties.general" :key="`${key}-${idx}`">
+        <dl>
+          <template v-for="([key, value], idx) in propertyEntries" :key="`${key}-${idx}`">
             <dt>{{ key }}</dt>
             <dd>{{ value }}</dd>
           </template>
-          <p v-if="!splitProperties.general.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
-        </dl>
-        <dl v-else-if="activeTab === 'io'">
-          <template v-for="([key, value], idx) in splitProperties.io" :key="`${key}-${idx}`">
-            <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
-          </template>
-          <p v-if="!splitProperties.io.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
-        </dl>
-        <dl v-else-if="activeTab === 'buffers'">
-          <template v-for="([key, value], idx) in splitProperties.buffers" :key="`${key}-${idx}`">
-            <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
-          </template>
-          <p v-if="!splitProperties.buffers.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
-        </dl>
-        <dl v-else-if="activeTab === 'output'">
-          <template v-for="([key, value], idx) in splitProperties.output" :key="`${key}-${idx}`">
-            <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
-          </template>
-          <p v-if="!splitProperties.output.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
-        </dl>
-        <dl v-else-if="activeTab === 'workers'">
-          <template v-for="([key, value], idx) in splitProperties.workers" :key="`${key}-${idx}`">
-            <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
-          </template>
-          <p v-if="!splitProperties.workers.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
-        </dl>
-        <dl v-else>
-          <template v-for="([key, value], idx) in splitProperties.misc" :key="`${key}-${idx}`">
-            <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
-          </template>
-          <p v-if="!splitProperties.misc.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
+          <p v-if="!propertyEntries.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
         </dl>
       </section>
       <section class="warnings" v-if="node.warnings?.length">
@@ -356,31 +193,5 @@ dd {
   border-radius: 16px;
   padding: 0.8rem 0.9rem;
   background: var(--bg-panel);
-}
-
-.tab-row {
-  display: flex;
-  gap: 0.5rem;
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.25rem;
-  flex-wrap: wrap;
-}
-
-.tab-row .tab {
-  border: none;
-  border-radius: 999px;
-  padding: 0.35rem 0.8rem;
-  background: transparent;
-  color: var(--text-secondary);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.tab-row .tab.active {
-  background: var(--bg-panel);
-  color: var(--text-primary);
-  box-shadow: var(--shadow-card);
 }
 </style>
