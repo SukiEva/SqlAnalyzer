@@ -151,8 +151,8 @@ h3 {
 dl {
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(140px, 200px) 1fr;
-  gap: 0.4rem 0.6rem;
+  grid-template-columns: minmax(90px, 150px) minmax(0, 1fr);
+  gap: 0.45rem 0.8rem;
 }
 
 dt {
@@ -167,6 +167,7 @@ dd {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.85rem;
   overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .warnings ul {
