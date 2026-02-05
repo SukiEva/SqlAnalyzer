@@ -166,9 +166,6 @@ const messages = {
       error: "Analysis failed.",
       updatedAt: "Last run:",
     },
-    tooltip: {
-      officialDoc: "Open official guide",
-    },
   },
   zh: {
     app: {
@@ -323,9 +320,6 @@ const messages = {
       raw: "原始输出",
       error: "分析失败。",
       updatedAt: "最近一次：",
-    },
-    tooltip: {
-      officialDoc: "查看官方说明",
     },
   },
 };

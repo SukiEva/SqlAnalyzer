@@ -38,7 +38,6 @@ const stageSize = ref({ width: 0, height: 0 });
 const dragging = ref(false);
 const dragOrigin = ref({ x: 0, y: 0 });
 const transformOrigin = ref({ x: 0, y: 0 });
-const focusedNode = computed(() => planStore.focusedNode);
 let resizeObserver: ResizeObserver | null = null;
 
 const layout = computed<LayoutResult>(() => {
