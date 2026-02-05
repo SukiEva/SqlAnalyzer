@@ -229,18 +229,6 @@ watch(
           <p v-else class="empty">{{ t("insights.none") }}</p>
         </section>
 
-        <section class="analysis-card">
-          <h4>{{ t("insights.sources") }}</h4>
-          <ul v-if="currentState.result.sources.length">
-            <li v-for="source in currentState.result.sources" :key="source.url">
-              <strong>{{ source.title }}</strong>
-              <span> — </span>
-              <a :href="source.url" target="_blank" rel="noreferrer">{{ source.url }}</a>
-              <p>{{ source.reason }}</p>
-            </li>
-          </ul>
-          <p v-else class="empty">{{ t("insights.none") }}</p>
-        </section>
       </div>
 
       <div v-else-if="currentState?.status === 'done' && currentState.raw" class="analysis-card">
@@ -345,18 +333,6 @@ watch(
   margin-bottom: 0.5rem;
   word-break: break-word;
   overflow-wrap: anywhere;
-}
-
-.analysis-card a {
-  color: var(--accent-1);
-  display: inline-block;
-  max-width: 100%;
-  word-break: break-all;
-  overflow-wrap: anywhere;
-}
-
-.analysis-card li p {
-  margin: 0.35rem 0 0;
 }
 
 .analysis-item {

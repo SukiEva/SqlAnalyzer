@@ -53,13 +53,6 @@ watch(theme, (val) => {
       </div>
     </header>
 
-    <div class="settings-tabs">
-      <span class="settings-tab active">{{ t("settings.tabs.general") }}</span>
-      <span class="settings-tab">{{ t("settings.tabs.advanced") }}</span>
-      <span class="settings-tab">{{ t("settings.tabs.usage") }}</span>
-      <span class="settings-tab">{{ t("settings.tabs.about") }}</span>
-    </div>
-
     <section class="settings-card">
       <div class="setting-item">
         <div class="setting-text">
@@ -189,31 +182,6 @@ watch(theme, (val) => {
 .back-button:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-soft);
-}
-
-.settings-tabs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 0.35rem;
-  box-shadow: var(--shadow-card);
-}
-
-.settings-tab {
-  text-align: center;
-  padding: 0.5rem 0.75rem;
-  border-radius: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.settings-tab.active {
-  background: var(--accent-1);
-  color: #fff;
-  box-shadow: 0 12px 20px rgba(59, 130, 246, 0.25);
 }
 
 .settings-card {

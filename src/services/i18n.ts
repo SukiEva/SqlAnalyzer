@@ -115,12 +115,6 @@ const messages = {
     settings: {
       title: "Control Room",
       description: "Manage language, theme, and AI integrations.",
-      tabs: {
-        general: "General",
-        advanced: "Advanced",
-        usage: "Usage",
-        about: "About",
-      },
       language: "Language",
       languageDesc: "Switch UI language",
       theme: {
@@ -277,12 +271,6 @@ const messages = {
     settings: {
       title: "控制面板",
       description: "配置语言、主题以及 AI 接入。",
-      tabs: {
-        general: "通用",
-        advanced: "高级",
-        usage: "使用统计",
-        about: "关于",
-      },
       language: "界面语言",
       languageDesc: "切换中英文界面",
       theme: {
