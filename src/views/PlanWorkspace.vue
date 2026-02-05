@@ -3,7 +3,6 @@ import PlanTree from "@/components/PlanTree.vue";
 import PlanGraph from "@/components/PlanGraph.vue";
 import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
-import PlanNodeTooltip from "@/components/PlanNodeTooltip.vue";
 import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
 import PlanImportModal from "@/components/PlanImportModal.vue";
 import { usePlanStore } from "@/stores/planStore";
@@ -33,7 +32,6 @@ onMounted(() => {
 
 <template>
   <div class="workspace-grid">
-    <PlanNodeTooltip />
     <section class="workspace-body">
       <div class="workspace-main glass-panel">
         <template v-if="current">

@@ -67,8 +67,15 @@ const messages = {
         empty: "Select a node from the tree or canvas to inspect metrics.",
         attributes: "Attributes",
         warnings: "Warnings",
-        docLink: "Open documentation",
         unknown: "N/A",
+        nodeId: "Node",
+        estimateRatio: "Rows ratio",
+        emptyTab: "No details available.",
+        tabs: {
+          general: "General",
+          output: "Output",
+          misc: "Misc",
+        },
       },
     },
     history: {
@@ -223,8 +230,15 @@ const messages = {
         empty: "从树或画布中选择节点以查看指标",
         attributes: "关键属性",
         warnings: "告警信息",
-        docLink: "查看节点文档",
         unknown: "未知",
+        nodeId: "节点",
+        estimateRatio: "行数比例",
+        emptyTab: "暂无相关字段。",
+        tabs: {
+          general: "常规",
+          output: "输出",
+          misc: "其它",
+        },
       },
     },
     history: {

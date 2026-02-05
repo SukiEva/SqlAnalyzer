@@ -48,17 +48,6 @@ function selectNode() {
   store.focusNode(props.node.id);
 }
 
-function handleHover(event: MouseEvent) {
-  if (!props.node.docKey) return;
-  store.showDocTooltip(props.node.docKey, {
-    x: event.clientX + 20,
-    y: event.clientY + window.scrollY - 12,
-  });
-}
-
-function handleLeave() {
-  store.scheduleDocTooltipHide();
-}
 </script>
 
 <template>
@@ -66,8 +55,6 @@ function handleLeave() {
     <div
       class="node-head"
       :class="{ highlighted: isHighlighted || isFocused, warn: ratio > 1.5, critical: ratio > 2.5 }"
-      @mouseenter="handleHover"
-      @mouseleave="handleLeave"
       @click="selectNode"
     >
       <button v-if="node.children.length" class="collapse" @click.stop="toggleCollapse">
