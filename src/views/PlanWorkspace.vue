@@ -13,7 +13,6 @@ const planStore = usePlanStore();
 const { t } = useI18n();
 
 const nodes = computed(() => planStore.nodes);
-const insights = computed(() => planStore.insights);
 const focusedNode = computed(() => planStore.focusedNode);
 const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
@@ -95,7 +94,7 @@ onMounted(() => {
             <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
           </section>
           <section v-show="activeTab === 'insights'" class="insights-pane">
-            <PlanInsightPanel :insights="insights" />
+            <PlanInsightPanel :execution="current" />
           </section>
         </div>
       </div>

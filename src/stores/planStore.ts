@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import type { PlanExecution, PlanNode } from "@/modules/planModel";
 import { mockPlan } from "@/modules/planSamples";
-import { evaluatePlan } from "@/modules/insights";
 import { loadLocalPlans, saveLocalPlans } from "@/services/historyStorage";
 
 const TOOLTIP_HIDE_DELAY = 400;
@@ -46,10 +45,6 @@ export const usePlanStore = defineStore("plan", {
     focusedNode(state): PlanNode | null {
       if (!state.currentExecution) return null;
       return findNodeById(state.currentExecution.nodes, state.focusedNodeId ?? null);
-    },
-    insights(state) {
-      if (!state.currentExecution) return [];
-      return evaluatePlan(state.currentExecution);
     },
     historySummaries(state) {
       return state.history.map((entry) => entry.summary);
