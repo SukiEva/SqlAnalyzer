@@ -15,6 +15,15 @@ const { t } = useI18n();
 
 const activeTab = ref("general");
 
+const tabOptions = computed(() => [
+  { id: "general", label: t("plan.details.tabs.general") },
+  { id: "io", label: t("plan.details.tabs.io") },
+  { id: "buffers", label: t("plan.details.tabs.buffers") },
+  { id: "output", label: t("plan.details.tabs.output") },
+  { id: "workers", label: t("plan.details.tabs.workers") },
+  { id: "misc", label: t("plan.details.tabs.misc") },
+]);
+
 const metrics = computed(() => {
   if (!props.node) return [];
   return [
@@ -35,23 +44,112 @@ const estimateRatio = computed(() => {
 
 const splitProperties = computed(() => {
   if (!props.node) {
-    return { general: [], output: [], misc: [] } as Record<string, Array<[string, string | number | boolean]>>;
+    return {
+      general: [],
+      io: [],
+      buffers: [],
+      output: [],
+      workers: [],
+      misc: [],
+    } as Record<string, Array<[string, string | number | boolean]>>;
   }
   const entries = Object.entries(props.node.properties ?? {});
   const general: Array<[string, string | number | boolean]> = [];
+  const io: Array<[string, string | number | boolean]> = [];
+  const buffers: Array<[string, string | number | boolean]> = [];
   const output: Array<[string, string | number | boolean]> = [];
+  const workers: Array<[string, string | number | boolean]> = [];
   const misc: Array<[string, string | number | boolean]> = [];
+  const outputTokens = [
+    "output",
+    "target",
+    "group key",
+    "sort key",
+    "hash key",
+    "merge key",
+    "distinct",
+    "projection",
+    "order by",
+    "partition by",
+  ];
+  const ioTokens = [
+    "i/o",
+    "io",
+    "read time",
+    "write time",
+    "io time",
+    "disk",
+  ];
+  const bufferTokens = [
+    "buffer",
+    "block",
+    "hit",
+    "dirtied",
+    "written",
+    "read",
+    "temp",
+    "shared",
+    "local",
+    "cache",
+    "reused",
+  ];
+  const workerTokens = ["worker", "parallel", "launch", "planned", "launched", "leader", "gather"];
+  const generalTokens = [
+    "parent",
+    "relationship",
+    "join",
+    "scan",
+    "index",
+    "strategy",
+    "relation",
+    "schema",
+    "alias",
+    "startup",
+    "total",
+    "cost",
+    "rows",
+    "width",
+    "loops",
+    "time",
+    "condition",
+    "filter",
+    "recheck",
+    "heap",
+    "hash",
+    "sort",
+    "group",
+    "aggregate",
+    "strategy",
+    "type",
+  ];
   entries.forEach(([key, value]) => {
     const lower = key.toLowerCase();
-    if (["output", "filter", "rows", "width", "target", "group", "project"].some((token) => lower.includes(token))) {
+    if (outputTokens.some((token) => lower.includes(token))) {
       output.push([key, value]);
-    } else if (["join", "scan", "index", "sort", "hash", "agg", "parallel"].some((token) => lower.includes(token))) {
-      general.push([key, value]);
-    } else {
-      misc.push([key, value]);
+      return;
     }
+    const ioMatch =
+      ioTokens.some((token) => lower.includes(token)) &&
+      (lower.includes("time") || lower.includes("i/o") || lower.includes("io"));
+    if (ioMatch || (lower.includes("time") && (lower.includes("read") || lower.includes("write")))) {
+      io.push([key, value]);
+      return;
+    }
+    if (bufferTokens.some((token) => lower.includes(token))) {
+      buffers.push([key, value]);
+      return;
+    }
+    if (workerTokens.some((token) => lower.includes(token))) {
+      workers.push([key, value]);
+      return;
+    }
+    if (generalTokens.some((token) => lower.includes(token))) {
+      general.push([key, value]);
+      return;
+    }
+    misc.push([key, value]);
   });
-  return { general, output, misc };
+  return { general, io, buffers, output, workers, misc };
 });
 </script>
 
@@ -75,38 +173,59 @@ const splitProperties = computed(() => {
           <strong>{{ item.value }}</strong>
         </div>
       </div>
-      <div class="tab-row" v-if="Object.keys(node.properties).length">
-        <button class="tab" :class="{ active: activeTab === 'general' }" @click="activeTab = 'general'">
-          {{ t("plan.details.tabs.general") }}
-        </button>
-        <button class="tab" :class="{ active: activeTab === 'output' }" @click="activeTab = 'output'">
-          {{ t("plan.details.tabs.output") }}
-        </button>
-        <button class="tab" :class="{ active: activeTab === 'misc' }" @click="activeTab = 'misc'">
-          {{ t("plan.details.tabs.misc") }}
+      <div class="tab-row" v-if="Object.keys(node.properties ?? {}).length">
+        <button
+          v-for="tab in tabOptions"
+          :key="tab.id"
+          class="tab"
+          :class="{ active: activeTab === tab.id }"
+          @click="activeTab = tab.id"
+        >
+          {{ tab.label }}
         </button>
       </div>
-      <section class="properties" v-if="Object.keys(node.properties).length">
+      <section class="properties" v-if="Object.keys(node.properties ?? {}).length">
         <dl v-if="activeTab === 'general'">
           <template v-for="([key, value], idx) in splitProperties.general" :key="`${key}-${idx}`">
             <dt>{{ key }}</dt>
             <dd>{{ value }}</dd>
           </template>
-          <p v-if="!splitProperties.general.length" class="empty">{{ t("plan.details.emptyTab") }}</p>
+          <p v-if="!splitProperties.general.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
+        </dl>
+        <dl v-else-if="activeTab === 'io'">
+          <template v-for="([key, value], idx) in splitProperties.io" :key="`${key}-${idx}`">
+            <dt>{{ key }}</dt>
+            <dd>{{ value }}</dd>
+          </template>
+          <p v-if="!splitProperties.io.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
+        </dl>
+        <dl v-else-if="activeTab === 'buffers'">
+          <template v-for="([key, value], idx) in splitProperties.buffers" :key="`${key}-${idx}`">
+            <dt>{{ key }}</dt>
+            <dd>{{ value }}</dd>
+          </template>
+          <p v-if="!splitProperties.buffers.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
         </dl>
         <dl v-else-if="activeTab === 'output'">
           <template v-for="([key, value], idx) in splitProperties.output" :key="`${key}-${idx}`">
             <dt>{{ key }}</dt>
             <dd>{{ value }}</dd>
           </template>
-          <p v-if="!splitProperties.output.length" class="empty">{{ t("plan.details.emptyTab") }}</p>
+          <p v-if="!splitProperties.output.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
+        </dl>
+        <dl v-else-if="activeTab === 'workers'">
+          <template v-for="([key, value], idx) in splitProperties.workers" :key="`${key}-${idx}`">
+            <dt>{{ key }}</dt>
+            <dd>{{ value }}</dd>
+          </template>
+          <p v-if="!splitProperties.workers.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
         </dl>
         <dl v-else>
           <template v-for="([key, value], idx) in splitProperties.misc" :key="`${key}-${idx}`">
             <dt>{{ key }}</dt>
             <dd>{{ value }}</dd>
           </template>
-          <p v-if="!splitProperties.misc.length" class="empty">{{ t("plan.details.emptyTab") }}</p>
+          <p v-if="!splitProperties.misc.length" class="empty-tab">{{ t("plan.details.emptyTab") }}</p>
         </dl>
       </section>
       <section class="warnings" v-if="node.warnings?.length">
@@ -133,7 +252,7 @@ const splitProperties = computed(() => {
 
 .node-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
 }
@@ -160,8 +279,8 @@ h3 {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.35rem 0.6rem;
-  border-radius: 999px;
+  padding: 0.3rem 0.6rem;
+  border-radius: 10px;
   background: var(--bg-muted);
   color: var(--text-secondary);
   font-size: 0.75rem;
@@ -170,7 +289,7 @@ h3 {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.75rem;
 }
 
@@ -195,7 +314,7 @@ h3 {
 dl {
   margin: 0;
   display: grid;
-  grid-template-columns: 90px 1fr;
+  grid-template-columns: minmax(140px, 200px) 1fr;
   gap: 0.4rem 0.6rem;
 }
 
@@ -210,6 +329,7 @@ dd {
   margin: 0;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.85rem;
+  overflow-wrap: anywhere;
 }
 
 .warnings ul {
@@ -225,6 +345,19 @@ dd {
   color: var(--text-secondary);
 }
 
+.empty-tab {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.properties {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0.8rem 0.9rem;
+  background: var(--bg-panel);
+}
+
 .tab-row {
   display: flex;
   gap: 0.5rem;
@@ -232,6 +365,7 @@ dd {
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .tab-row .tab {
