@@ -130,9 +130,10 @@ h3 {
 
 .ratio-pill {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.4rem;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.6rem;
+  flex-wrap: wrap;
   padding: 0.45rem 0.65rem;
   border-radius: 10px;
   background: var(--bg-muted);
@@ -144,9 +145,10 @@ h3 {
 .ratio-item {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.2rem;
   font-size: 0.7rem;
   color: var(--text-muted);
+  min-width: 90px;
 }
 
 .ratio-item strong {
