@@ -114,9 +114,12 @@ const canvasStyle = computed(() => ({
   height: `${layout.value.height}px`,
 }));
 
-const stageStyle = computed(() => ({
-  height: `${Math.max(layout.value.height, 460)}px`,
-}));
+const stageStyle = computed(() => {
+  const minHeight = 420;
+  const maxHeight = 620;
+  const height = Math.min(Math.max(layout.value.height, minHeight), maxHeight);
+  return { height: `${height}px` };
+});
 
 const contentStyle = computed(() => ({
   transform: `translate(${transform.value.x}px, ${transform.value.y}px) scale(${transform.value.scale})`,
