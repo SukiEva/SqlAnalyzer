@@ -46,11 +46,15 @@ const propertyEntries = computed(() =>
           <p class="subtitle">{{ t("plan.details.nodeId") }} #{{ node.id }}</p>
         </div>
         <div class="ratio-pill" v-if="estimateRatio">
-          <div class="ratio-rows">
-            <span>{{ t("plan.details.actualRows") }} {{ node.metrics.actualRows.toLocaleString() }}</span>
-            <span>{{ t("plan.details.estimatedRows") }} {{ node.metrics.estimatedRows.toLocaleString() }}</span>
+          <div class="ratio-item">
+            <span>{{ t("plan.details.actualRows") }}</span>
+            <strong>{{ node.metrics.actualRows.toLocaleString() }}</strong>
           </div>
-          <div class="ratio-value">
+          <div class="ratio-item">
+            <span>{{ t("plan.details.estimatedRows") }}</span>
+            <strong>{{ node.metrics.estimatedRows.toLocaleString() }}</strong>
+          </div>
+          <div class="ratio-item">
             <span>{{ t("plan.details.estimateRatio") }}</span>
             <strong>x{{ estimateRatio.toFixed(2) }}</strong>
           </div>
@@ -121,8 +125,8 @@ h3 {
 .ratio-pill {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 0.35rem;
+  align-items: flex-start;
+  gap: 0.4rem;
   padding: 0.45rem 0.65rem;
   border-radius: 10px;
   background: var(--bg-muted);
@@ -131,18 +135,18 @@ h3 {
   font-weight: 600;
 }
 
-.ratio-rows {
+.ratio-item {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.15rem;
   font-size: 0.7rem;
   color: var(--text-muted);
 }
 
-.ratio-value {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+.ratio-item strong {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  color: var(--text-primary);
 }
 
 .metrics {
