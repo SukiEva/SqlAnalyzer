@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { PlanNode } from "@/modules/planModel";
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { hierarchy, tree } from "d3-hierarchy";
 import { usePlanStore } from "@/stores/planStore";
 import { useI18n } from "vue-i18n";
@@ -34,10 +34,12 @@ const { t } = useI18n();
 
 const stageRef = ref<HTMLDivElement | null>(null);
 const transform = ref({ x: 40, y: 40, scale: 1 });
+const stageSize = ref({ width: 0, height: 0 });
 const dragging = ref(false);
 const dragOrigin = ref({ x: 0, y: 0 });
 const transformOrigin = ref({ x: 0, y: 0 });
 const focusedNode = computed(() => planStore.focusedNode);
+let resizeObserver: ResizeObserver | null = null;
 
 const layout = computed<LayoutResult>(() => {
   if (!props.nodes.length) {
@@ -112,6 +114,10 @@ const canvasStyle = computed(() => ({
   height: `${layout.value.height}px`,
 }));
 
+const stageStyle = computed(() => ({
+  height: `${Math.max(layout.value.height, 460)}px`,
+}));
+
 const contentStyle = computed(() => ({
   transform: `translate(${transform.value.x}px, ${transform.value.y}px) scale(${transform.value.scale})`,
   transformOrigin: "0 0",
@@ -119,11 +125,16 @@ const contentStyle = computed(() => ({
 
 watch(
   () => props.nodes.map((node) => node.id).join(","),
-  () => resetView(),
+  () => fitToView(),
+);
+
+watch(
+  () => [layout.value.width, layout.value.height, stageSize.value.width, stageSize.value.height],
+  () => fitToView(),
 );
 
 function resetView() {
-  transform.value = { x: 40, y: 40, scale: 1 };
+  fitToView();
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -178,6 +189,27 @@ function handleWheel(event: WheelEvent) {
   };
 }
 
+function fitToView() {
+  if (!layout.value.nodes.length) return;
+  if (!stageSize.value.width || !stageSize.value.height) {
+    transform.value = { x: 40, y: 40, scale: 1 };
+    return;
+  }
+  const padding = 80;
+  const availableWidth = Math.max(stageSize.value.width - padding, 120);
+  const availableHeight = Math.max(stageSize.value.height - padding, 120);
+  const scale = clamp(
+    Math.min(availableWidth / layout.value.width, availableHeight / layout.value.height, 1),
+    0.5,
+    2.4,
+  );
+  transform.value = {
+    scale,
+    x: (stageSize.value.width - layout.value.width * scale) / 2,
+    y: (stageSize.value.height - layout.value.height * scale) / 2,
+  };
+}
+
 function startDrag(event: PointerEvent) {
   if (!layout.value.nodes.length || event.button !== 0) return;
   dragging.value = true;
@@ -205,12 +237,32 @@ function endDrag() {
 }
 
 onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
   endDrag();
+});
+
+onMounted(() => {
+  if (!stageRef.value) return;
+  resizeObserver = new ResizeObserver((entries) => {
+    const entry = entries[0];
+    if (!entry) return;
+    stageSize.value = {
+      width: entry.contentRect.width,
+      height: entry.contentRect.height,
+    };
+  });
+  resizeObserver.observe(stageRef.value);
 });
 </script>
 
 <template>
-  <div class="graph-stage" ref="stageRef" @wheel.prevent="handleWheel" @pointerdown="startDrag">
+  <div
+    class="graph-stage"
+    ref="stageRef"
+    :style="stageStyle"
+    @wheel.prevent="handleWheel"
+    @pointerdown="startDrag"
+  >
       <div v-if="layout.nodes.length" class="graph-content" :style="contentStyle">
         <svg class="graph-canvas" :style="canvasStyle" :viewBox="`0 0 ${layout.width} ${layout.height}`">
           <g class="links">

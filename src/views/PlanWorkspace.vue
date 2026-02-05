@@ -297,6 +297,7 @@ onMounted(() => {
   display: grid;
   grid-template-columns: minmax(0, 2fr) 360px;
   gap: 1.5rem;
+  align-items: stretch;
 }
 
 .canvas-stage {
@@ -308,6 +309,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1200px) {
