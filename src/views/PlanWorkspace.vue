@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import PlanTree from "@/components/PlanTree.vue";
 import PlanGraph from "@/components/PlanGraph.vue";
-import PlanTimeline from "@/components/PlanTimeline.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
 import PlanImportModal from "@/components/PlanImportModal.vue";
@@ -19,7 +18,6 @@ const tabs = computed(() => [
   { id: "sql", label: t("plan.tabs.sql") },
   { id: "plan", label: t("plan.tabs.structure") },
   { id: "canvas", label: t("plan.tabs.canvas") },
-  { id: "timeline", label: t("plan.tabs.timeline") },
   { id: "insights", label: t("plan.tabs.insights") },
 ]);
 const activeTab = ref("sql");
@@ -100,9 +98,6 @@ onMounted(() => {
                   <PlanNodeDetails :node="focusedNode" />
                 </aside>
               </div>
-            </section>
-            <section v-else-if="activeTab === 'timeline'" key="timeline" class="timeline-pane">
-              <PlanTimeline :nodes="nodes" :total-time="current?.stats.totalTimeMs ?? 1" />
             </section>
             <section v-else key="insights" class="insights-pane">
               <PlanInsightPanel :execution="current" />
@@ -277,14 +272,12 @@ onMounted(() => {
 .plan-pane,
 .sql-pane,
 .canvas-pane,
-.timeline-pane,
 .insights-pane {
   padding: 0;
 }
 
 .plan-pane,
 .canvas-pane,
-.timeline-pane,
 .insights-pane {
   display: flex;
   flex-direction: column;
@@ -315,12 +308,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-.timeline-pane :deep(.timeline) {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 @media (max-width: 1200px) {

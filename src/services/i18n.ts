@@ -28,7 +28,6 @@ const messages = {
         sql: "SQL Context",
         structure: "Plan Tree",
         canvas: "Visualization",
-        timeline: "Timeline",
         insights: "Insights",
       },
       stats: {
@@ -45,10 +44,6 @@ const messages = {
         rows: "Rows",
         time: "Time",
         dn: "Node",
-      },
-      timeline: {
-        topNodes: "Top {count} nodes",
-        empty: "No plan data yet.",
       },
       meta: {
         sourceLabel: "Source",
@@ -71,6 +66,8 @@ const messages = {
         nodeId: "Node",
         estimateRatio: "Rows ratio",
         emptyTab: "No details available.",
+        actualRows: "Actual rows",
+        estimatedRows: "Estimated rows",
         tabs: {
           general: "General",
         },
@@ -189,7 +186,6 @@ const messages = {
         sql: "SQL 上下文",
         structure: "执行计划",
         canvas: "可视化",
-        timeline: "时间线",
         insights: "洞察",
       },
       stats: {
@@ -206,10 +202,6 @@ const messages = {
         rows: "行数",
         time: "耗时",
         dn: "节点",
-      },
-      timeline: {
-        topNodes: "展示前 {count} 个节点",
-        empty: "暂无计划数据",
       },
       meta: {
         sourceLabel: "来源",
@@ -232,6 +224,8 @@ const messages = {
         nodeId: "节点",
         estimateRatio: "行数比例",
         emptyTab: "暂无相关字段。",
+        actualRows: "实际行数",
+        estimatedRows: "预估行数",
         tabs: {
           general: "常规",
         },

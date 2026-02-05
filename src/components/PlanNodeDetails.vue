@@ -46,8 +46,14 @@ const propertyEntries = computed(() =>
           <p class="subtitle">{{ t("plan.details.nodeId") }} #{{ node.id }}</p>
         </div>
         <div class="ratio-pill" v-if="estimateRatio">
-          <span>{{ t("plan.details.estimateRatio") }}</span>
-          <strong>x{{ estimateRatio.toFixed(2) }}</strong>
+          <div class="ratio-rows">
+            <span>{{ t("plan.details.actualRows") }} {{ node.metrics.actualRows.toLocaleString() }}</span>
+            <span>{{ t("plan.details.estimatedRows") }} {{ node.metrics.estimatedRows.toLocaleString() }}</span>
+          </div>
+          <div class="ratio-value">
+            <span>{{ t("plan.details.estimateRatio") }}</span>
+            <strong>x{{ estimateRatio.toFixed(2) }}</strong>
+          </div>
         </div>
       </div>
       <div class="metrics">
@@ -113,15 +119,30 @@ h3 {
 }
 
 .ratio-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  padding: 0.45rem 0.65rem;
   border-radius: 10px;
   background: var(--bg-muted);
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+.ratio-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.ratio-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .metrics {
