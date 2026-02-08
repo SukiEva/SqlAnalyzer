@@ -102,14 +102,32 @@ async function run(mode: RunMode) {
     </label>
 
     <div class="runner-actions">
-      <button class="ghost" :disabled="!canRun" @click="run('plain')">
-        {{ runningMode === 'plain' ? t("runner.running") : t("runner.runPlain") }}
+      <button
+        class="runner-action"
+        :disabled="!canRun"
+        :title="t('runner.tipPlain')"
+        @click="run('plain')"
+      >
+        <span class="action-title">{{ t("runner.runPlain") }}</span>
+        <span class="action-desc">{{ t("runner.tipPlain") }}</span>
       </button>
-      <button class="ghost" :disabled="!canRun" @click="run('analyze')">
-        {{ runningMode === 'analyze' ? t("runner.running") : t("runner.runAnalyze") }}
+      <button
+        class="runner-action"
+        :disabled="!canRun"
+        :title="t('runner.tipAnalyze')"
+        @click="run('analyze')"
+      >
+        <span class="action-title">{{ t("runner.runAnalyze") }}</span>
+        <span class="action-desc">{{ t("runner.tipAnalyze") }}</span>
       </button>
-      <button class="ghost" :disabled="!canRun" @click="run('performance')">
-        {{ runningMode === 'performance' ? t("runner.running") : t("runner.runPerformance") }}
+      <button
+        class="runner-action"
+        :disabled="!canRun"
+        :title="t('runner.tipPerformance')"
+        @click="run('performance')"
+      >
+        <span class="action-title">{{ t("runner.runPerformance") }}</span>
+        <span class="action-desc">{{ t("runner.tipPerformance") }}</span>
       </button>
     </div>
 
@@ -122,11 +140,6 @@ async function run(mode: RunMode) {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 1.25rem;
-  background: var(--bg-panel);
-  box-shadow: var(--shadow-card);
 }
 
 .runner-header {
@@ -139,7 +152,7 @@ async function run(mode: RunMode) {
 .runner-tag {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
-  background: var(--bg-soft);
+  background: var(--bg-base);
   border: 1px solid var(--border);
   font-size: 0.7rem;
   letter-spacing: 0.08em;
@@ -161,7 +174,7 @@ async function run(mode: RunMode) {
 }
 
 .runner-field textarea {
-  background: var(--bg-soft);
+  background: var(--bg-base);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 0.75rem;
@@ -172,15 +185,50 @@ async function run(mode: RunMode) {
 }
 
 .runner-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.runner-action {
+  border: 1px solid var(--border);
+  background: var(--bg-base);
+  border-radius: 14px;
+  padding: 0.75rem 0.9rem;
+  text-align: left;
+  cursor: pointer;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.runner-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.runner-action:hover:not(:disabled) {
+  border-color: var(--accent-1);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-1px);
+}
+
+.action-title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.action-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .runner-empty {
   padding: 0.75rem 0.9rem;
   border-radius: 12px;
-  background: var(--bg-soft);
+  background: var(--bg-base);
   border: 1px dashed var(--border);
   color: var(--text-secondary);
   font-size: 0.85rem;
