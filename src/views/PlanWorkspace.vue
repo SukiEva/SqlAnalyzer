@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Pev2Plan from "@/components/Pev2Plan.vue";
 import PageNav from "@/components/PageNav.vue";
+import PlanComparePanel from "@/components/PlanComparePanel.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanImportModal from "@/components/PlanImportModal.vue";
 import { usePlanStore } from "@/stores/planStore";
@@ -16,6 +17,7 @@ const tabs = computed(() => [
   { id: "visual", label: t("plan.tabs.structure") },
   { id: "execution", label: t("plan.tabs.canvas") },
   { id: "insights", label: t("plan.tabs.insights") },
+  { id: "compare", label: t("plan.tabs.compare") },
 ]);
 const activeTab = ref("visual");
 const pev2Tab = computed(() => {
@@ -24,6 +26,8 @@ const pev2Tab = computed(() => {
       return "raw";
     case "execution":
       return "grid";
+    case "compare":
+      return "plan";
     default:
       return "plan";
   }
@@ -76,6 +80,9 @@ onMounted(() => {
           <Transition name="tab-fade" mode="out-in">
             <section v-if="activeTab === 'insights'" key="insights" class="insights-pane">
               <PlanInsightPanel :execution="current" />
+            </section>
+            <section v-else-if="activeTab === 'compare'" key="compare" class="compare-pane">
+              <PlanComparePanel :execution="current" />
             </section>
             <section v-else key="plan" class="plan-pane">
               <Pev2Plan :execution="current" :active-tab="pev2Tab" :key="current ? current.summary.id : 'empty'" />
@@ -189,12 +196,14 @@ onMounted(() => {
 }
 
 .plan-pane,
-.insights-pane {
+.insights-pane,
+.compare-pane {
   padding: 0;
 }
 
 .plan-pane,
-.insights-pane {
+.insights-pane,
+.compare-pane {
   display: flex;
   flex-direction: column;
   min-height: 420px;

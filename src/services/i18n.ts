@@ -29,6 +29,7 @@ const messages = {
         structure: "Visualization",
         canvas: "Execution Plan",
         insights: "Insights",
+        compare: "Compare",
       },
       stats: {
         nodes: "Nodes",
@@ -167,6 +168,15 @@ const messages = {
       error: "Analysis failed.",
       updatedAt: "Last run:",
     },
+    compare: {
+      title: "Plan comparison",
+      hint: "Paste a new plan to highlight differences.",
+      newPlanLabel: "New plan",
+      oldPlanLabel: "Current plan",
+      emptyOld: "No plan available for comparison.",
+      emptyNew: "Paste a new plan to compare.",
+      placeholder: "Paste the new execution plan",
+    },
   },
   zh: {
     app: {
@@ -185,6 +195,7 @@ const messages = {
         structure: "可视化",
         canvas: "执行计划",
         insights: "洞察",
+        compare: "对比",
       },
       stats: {
         nodes: "节点数",
@@ -322,6 +333,15 @@ const messages = {
       raw: "原始输出",
       error: "分析失败。",
       updatedAt: "最近一次：",
+    },
+    compare: {
+      title: "执行计划对比",
+      hint: "粘贴新的执行计划，高亮差异。",
+      newPlanLabel: "新执行计划",
+      oldPlanLabel: "当前执行计划",
+      emptyOld: "暂无可对比的执行计划。",
+      emptyNew: "粘贴新的执行计划以进行对比。",
+      placeholder: "粘贴新的执行计划文本",
     },
   },
 };
