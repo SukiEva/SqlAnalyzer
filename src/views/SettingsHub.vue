@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { supportedLocales, setLocalePreference } from "@/services/i18n";
 import { loadAiSettings, saveAiSettings } from "@/services/aiSettings";
+import { loadDbSettings, saveDbSettings } from "@/services/dbSettings";
 import {
   applyThemePreference,
   loadThemePreference,
@@ -13,6 +14,7 @@ import {
 const { t, locale } = useI18n();
 const language = ref(locale.value as string);
 const aiSettings = ref(loadAiSettings());
+const dbSettings = ref(loadDbSettings());
 const theme = ref<ThemePreference>(loadThemePreference());
 
 const themeOptions = computed(() => [
@@ -29,6 +31,14 @@ watch(
   aiSettings,
   (val) => {
     saveAiSettings(val);
+  },
+  { deep: true },
+);
+
+watch(
+  dbSettings,
+  (val) => {
+    saveDbSettings(val);
   },
   { deep: true },
 );
@@ -128,6 +138,36 @@ watch(theme, (val) => {
         </label>
       </div>
       <p class="ai-hint">{{ t("settings.ai.notice") }}</p>
+    </section>
+
+    <section class="settings-card">
+      <div class="setting-text">
+        <h3>{{ t("settings.db.title") }}</h3>
+        <p>{{ t("settings.db.description") }}</p>
+      </div>
+      <div class="db-grid">
+        <label class="field">
+          <span>{{ t("settings.db.driver") }}</span>
+          <select v-model="dbSettings.driver">
+            <option value="opengauss">Open Gauss</option>
+            <option value="postgresql">PostgreSQL</option>
+            <option value="dws">Huawei DWS</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>{{ t("settings.db.connection") }}</span>
+          <input v-model="dbSettings.connectionString" type="text" :placeholder="t('settings.db.connectionHint')" />
+        </label>
+        <label class="field">
+          <span>{{ t("settings.db.username") }}</span>
+          <input v-model="dbSettings.username" type="text" :placeholder="t('settings.db.usernameHint')" />
+        </label>
+        <label class="field">
+          <span>{{ t("settings.db.password") }}</span>
+          <input v-model="dbSettings.password" type="password" :placeholder="t('settings.db.passwordHint')" />
+        </label>
+      </div>
+      <p class="ai-hint">{{ t("settings.db.notice") }}</p>
     </section>
   </div>
 </template>
@@ -267,6 +307,12 @@ watch(theme, (val) => {
   gap: 0.9rem;
 }
 
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -280,7 +326,8 @@ watch(theme, (val) => {
   color: var(--text-muted);
 }
 
-.field input {
+.field input,
+.field select {
   background: var(--bg-soft);
   border: 1px solid var(--border);
   border-radius: 12px;
