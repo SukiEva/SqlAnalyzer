@@ -71,6 +71,7 @@ async function submit() {
           <select v-model="dialect">
             <option value="opengauss">openGauss</option>
             <option value="dws">Huawei DWS</option>
+            <option value="postgresql">PostgreSQL</option>
           </select>
         </label>
         <label class="field">
@@ -79,7 +80,7 @@ async function submit() {
         </label>
         <label class="field">
           <span>{{ t("import.fields.plan") }}</span>
-          <textarea v-model="payload" rows="10" :placeholder="t('import.placeholders.plan')"></textarea>
+          <textarea v-model="payload" rows="4" :placeholder="t('import.placeholders.plan')"></textarea>
         </label>
         <p v-if="error" class="error">{{ error }}</p>
         <div class="actions">
@@ -112,7 +113,7 @@ async function submit() {
   flex-direction: column;
   gap: 1rem;
   box-shadow: var(--shadow);
-  overflow: auto;
+  overflow: hidden;
 }
 
 header {

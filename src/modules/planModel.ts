@@ -1,4 +1,4 @@
-export type PlanDialect = "dws" | "opengauss";
+export type PlanDialect = "dws" | "opengauss" | "postgresql";
 
 export interface PlanMetric {
   actualRows: number;

@@ -52,6 +52,7 @@ export function parsePlanText(raw: string, options: ParseOptions = {}): PlanExec
 
 function detectDialect(text: string): PlanDialect {
   if (/opengauss/i.test(text)) return "opengauss";
+  if (/postgre/i.test(text)) return "postgresql";
   return /dws/i.test(text) ? "dws" : "opengauss";
 }
 
