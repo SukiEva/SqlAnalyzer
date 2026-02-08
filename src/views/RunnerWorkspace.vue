@@ -61,10 +61,9 @@ onMounted(() => {
 
 .runner-content {
   display: flex;
-  justify-content: flex-start;
 }
 
 .runner-content :deep(.runner-panel) {
-  width: min(720px, 100%);
+  width: 100%;
 }
 </style>
