@@ -122,6 +122,7 @@ function handleKeydown(event: KeyboardEvent) {
               fill="currentColor"
             />
           </svg>
+          <span class="runner-tooltip">{{ t("runner.runPlain") }}</span>
         </button>
         <button
           class="runner-icon-button"
@@ -141,6 +142,7 @@ function handleKeydown(event: KeyboardEvent) {
               stroke-linejoin="round"
             />
           </svg>
+          <span class="runner-tooltip">{{ t("runner.runAnalyze") }}</span>
         </button>
         <button
           class="runner-icon-button"
@@ -160,6 +162,7 @@ function handleKeydown(event: KeyboardEvent) {
               stroke-linejoin="round"
             />
           </svg>
+          <span class="runner-tooltip">{{ t("runner.runPerformance") }}</span>
         </button>
       </div>
     </header>
@@ -207,6 +210,7 @@ function handleKeydown(event: KeyboardEvent) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   color: var(--text-secondary);
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, color 0.2s ease;
@@ -224,6 +228,12 @@ function handleKeydown(event: KeyboardEvent) {
   transform: translateY(-1px);
 }
 
+.runner-icon-button:hover .runner-tooltip {
+  opacity: 1;
+  transform: translate(-50%, -8px);
+  pointer-events: auto;
+}
+
 .runner-icon-button.active {
   border-color: var(--accent-1);
   color: var(--text-primary);
@@ -234,6 +244,25 @@ function handleKeydown(event: KeyboardEvent) {
   cursor: not-allowed;
   opacity: 0.6;
   box-shadow: none;
+}
+
+.runner-tooltip {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -2px);
+  opacity: 0;
+  pointer-events: none;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  box-shadow: var(--shadow-card);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 5;
 }
 
 .subtitle {
