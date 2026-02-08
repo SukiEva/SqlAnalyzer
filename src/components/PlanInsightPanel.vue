@@ -5,7 +5,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { analyzePlanWithAi, type AiInsightResult } from "@/services/aiInsights";
 import { isAiConfigured, loadAiSettings } from "@/services/aiSettings";
-import { loadInsight, saveInsight } from "@/services/aiInsightStorage";
+import { loadInsight, loadInsightHistory, saveInsight } from "@/services/aiInsightStorage";
 
 const props = defineProps({
   execution: {
@@ -25,6 +25,8 @@ interface AnalysisState {
   error?: string;
   updatedAt?: string;
   fromCache?: boolean;
+  history?: { id: string; updatedAt: string }[];
+  selectedId?: string;
 }
 
 const settings = ref(loadAiSettings());
@@ -45,8 +47,17 @@ function setState(key: string, patch: Partial<AnalysisState>) {
 
 function hydrateFromCache(planId: string) {
   const stored = loadInsight(planId);
+  const history = loadInsightHistory(planId);
   if (!stored) {
-    setState(planId, { status: "idle", result: null, raw: undefined, error: undefined, fromCache: false });
+    setState(planId, {
+      status: "idle",
+      result: null,
+      raw: undefined,
+      error: undefined,
+      fromCache: false,
+      history: history.map((entry) => ({ id: entry.id ?? `${entry.planId}-${entry.updatedAt}`, updatedAt: entry.updatedAt })),
+      selectedId: history[0]?.id ?? undefined,
+    });
     return;
   }
   setState(planId, {
@@ -55,6 +66,8 @@ function hydrateFromCache(planId: string) {
     raw: stored.raw,
     updatedAt: stored.updatedAt,
     fromCache: true,
+    history: history.map((entry) => ({ id: entry.id ?? `${entry.planId}-${entry.updatedAt}`, updatedAt: entry.updatedAt })),
+    selectedId: stored.id ?? `${stored.planId}-${stored.updatedAt}`,
   });
 }
 
@@ -78,12 +91,16 @@ async function runAnalysis() {
         raw,
       });
     }
+    const history = loadInsightHistory(key);
+    const latest = history[0];
     setState(key, {
       status: "done",
-      result,
-      raw,
-      updatedAt: new Date().toISOString(),
+      result: latest?.result ?? result,
+      raw: latest?.raw ?? raw,
+      updatedAt: latest?.updatedAt ?? new Date().toISOString(),
       fromCache: false,
+      history: history.map((entry) => ({ id: entry.id ?? `${entry.planId}-${entry.updatedAt}`, updatedAt: entry.updatedAt })),
+      selectedId: latest?.id ?? `${key}-${new Date().toISOString()}`,
     });
   } catch (err) {
     setState(key, {
@@ -96,6 +113,22 @@ async function runAnalysis() {
 
 function refreshSettings() {
   settings.value = loadAiSettings();
+}
+
+function selectHistory(entryId: string) {
+  const key = currentKey.value;
+  const history = loadInsightHistory(key);
+  const entry = history.find((item) => (item.id ?? `${item.planId}-${item.updatedAt}`) === entryId);
+  if (!entry) return;
+  setState(key, {
+    status: "done",
+    result: entry.result,
+    raw: entry.raw,
+    updatedAt: entry.updatedAt,
+    fromCache: true,
+    history: history.map((item) => ({ id: item.id ?? `${item.planId}-${item.updatedAt}`, updatedAt: item.updatedAt })),
+    selectedId: entryId,
+  });
 }
 
 onMounted(() => {
@@ -144,6 +177,21 @@ watch(
           {{ t("insights.modelLabel") }}: {{ settings.model || "-" }}
           <span v-if="currentState?.fromCache" class="cache-pill">{{ t("insights.cached") }}</span>
         </span>
+      </div>
+
+      <div v-if="currentState?.history?.length" class="history-bar">
+        <span class="history-label">{{ t("insights.history") }}</span>
+        <div class="history-list">
+          <button
+            v-for="entry in currentState.history"
+            :key="entry.id"
+            class="history-pill"
+            :class="{ active: entry.id === currentState.selectedId }"
+            @click="selectHistory(entry.id)"
+          >
+            {{ new Date(entry.updatedAt).toLocaleString() }}
+          </button>
+        </div>
       </div>
 
       <div v-if="currentState?.status === 'loading'" class="loading">
@@ -295,6 +343,46 @@ watch(
   color: var(--text-muted);
   font-size: 0.65rem;
   font-weight: 600;
+}
+
+.history-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+
+.history-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.history-pill {
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.history-pill.active {
+  border-color: var(--accent-1);
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card);
 }
 
 .analysis-grid {
