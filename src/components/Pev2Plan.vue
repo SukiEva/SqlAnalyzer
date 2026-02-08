@@ -39,6 +39,27 @@ const targetTab = computed(() => props.activeTab ?? "plan");
   height: 100%;
   border-radius: 16px;
   overflow: hidden;
+  --bs-body-bg: var(--bg-panel);
+  --bs-body-color: var(--text-primary);
+  --bs-border-color: var(--border);
+  --bs-tertiary-bg: var(--bg-soft);
+  --bs-secondary-color: var(--text-secondary);
+  --bs-secondary-bg: var(--bg-muted);
+}
+
+.pev2-wrapper :deep(.context-pane) {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+}
+
+.pev2-wrapper :deep(.context-title) {
+  background: var(--bg-soft);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.pev2-wrapper :deep(.context-body) {
+  background: var(--bg-panel);
 }
 
 
