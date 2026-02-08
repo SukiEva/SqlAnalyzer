@@ -24,6 +24,9 @@ const error = ref<string | null>(null);
 const dbSettings = ref(loadDbSettings());
 
 const canRun = computed(() => isDbConfigured(dbSettings.value) && Boolean(sql.value.trim()));
+const shortcutPlain = computed(() => t("runner.shortcutPlain"));
+const shortcutAnalyze = computed(() => t("runner.shortcutAnalyze"));
+const shortcutPerformance = computed(() => t("runner.shortcutPerformance"));
 
 function refreshSettings() {
   dbSettings.value = loadDbSettings();
@@ -80,6 +83,21 @@ async function run(mode: RunMode) {
     runningMode.value = null;
   }
 }
+
+function handleKeydown(event: KeyboardEvent) {
+  const hasTrigger = event.ctrlKey || event.metaKey;
+  if (!hasTrigger || event.key !== "Enter") return;
+  event.preventDefault();
+  if (event.shiftKey) {
+    run("analyze");
+    return;
+  }
+  if (event.altKey) {
+    run("performance");
+    return;
+  }
+  run("plain");
+}
 </script>
 
 <template>
@@ -94,18 +112,14 @@ async function run(mode: RunMode) {
           class="runner-icon-button"
           :class="{ active: runningMode === 'plain' }"
           :disabled="!canRun || runningMode !== null"
-          :title="t('runner.tipPlain')"
+          :title="`${t('runner.tipPlain')} (${shortcutPlain})`"
           :aria-label="t('runner.runPlain')"
           @click="run('plain')"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
-              d="M4 5.5h10.5a3.5 3.5 0 0 1 0 7H4m0 0 3-3m-3 3 3 3M14 19h6"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              d="M7 5l11 7-11 7V5Z"
+              fill="currentColor"
             />
           </svg>
         </button>
@@ -113,13 +127,13 @@ async function run(mode: RunMode) {
           class="runner-icon-button"
           :class="{ active: runningMode === 'analyze' }"
           :disabled="!canRun || runningMode !== null"
-          :title="t('runner.tipAnalyze')"
+          :title="`${t('runner.tipAnalyze')} (${shortcutAnalyze})`"
           :aria-label="t('runner.runAnalyze')"
           @click="run('analyze')"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
-              d="M4 19V5m0 14h14m0 0-3-3m3 3-3 3M9 15l3-4 3 2 4-6"
+              d="M9 9V7a3 3 0 0 1 6 0v2M9 9h6M9 9a3 3 0 0 0-3 3v1m12-4a3 3 0 0 1 3 3v1M8 5H6m12 0h-2M4 13h2m12 0h2M4 17h2m12 0h2M10 15v2m4-2v2"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -132,13 +146,13 @@ async function run(mode: RunMode) {
           class="runner-icon-button"
           :class="{ active: runningMode === 'performance' }"
           :disabled="!canRun || runningMode !== null"
-          :title="t('runner.tipPerformance')"
+          :title="`${t('runner.tipPerformance')} (${shortcutPerformance})`"
           :aria-label="t('runner.runPerformance')"
           @click="run('performance')"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
-              d="M12 4v4m0 0a4 4 0 1 1-3.46 6m3.46-6 4-4m-8.5 15H20"
+              d="M4 15a8 8 0 1 1 16 0M12 7v5l3 3M4 20h16"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -156,7 +170,7 @@ async function run(mode: RunMode) {
 
     <label class="runner-field">
       <span>{{ t("runner.sqlLabel") }}</span>
-      <textarea v-model="sql" rows="6" :placeholder="t('runner.sqlPlaceholder')"></textarea>
+      <textarea v-model="sql" rows="6" :placeholder="t('runner.sqlPlaceholder')" @keydown="handleKeydown"></textarea>
     </label>
 
     <p v-if="error" class="runner-error">{{ error }}</p>
