@@ -86,7 +86,7 @@ header {
   padding: 0.85rem;
   border-radius: 16px;
   border: 1px solid var(--border);
-  background: var(--bg-panel);
+  background: var(--bg-base);
   box-shadow: var(--shadow-card);
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
