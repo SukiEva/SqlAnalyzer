@@ -112,7 +112,6 @@ function handleKeydown(event: KeyboardEvent) {
           class="runner-icon-button"
           :class="{ active: runningMode === 'plain' }"
           :disabled="!canRun || runningMode !== null"
-          :title="`${t('runner.tipPlain')} (${shortcutPlain})`"
           :aria-label="t('runner.runPlain')"
           @click="run('plain')"
         >
@@ -122,13 +121,15 @@ function handleKeydown(event: KeyboardEvent) {
               fill="currentColor"
             />
           </svg>
-          <span class="runner-tooltip">{{ t("runner.runPlain") }}</span>
+          <span class="runner-tooltip">
+            <span class="runner-tooltip-title">{{ t("runner.runPlain") }}</span>
+            <span class="runner-tooltip-shortcut">{{ shortcutPlain }}</span>
+          </span>
         </button>
         <button
           class="runner-icon-button"
           :class="{ active: runningMode === 'analyze' }"
           :disabled="!canRun || runningMode !== null"
-          :title="`${t('runner.tipAnalyze')} (${shortcutAnalyze})`"
           :aria-label="t('runner.runAnalyze')"
           @click="run('analyze')"
         >
@@ -142,13 +143,15 @@ function handleKeydown(event: KeyboardEvent) {
               stroke-linejoin="round"
             />
           </svg>
-          <span class="runner-tooltip">{{ t("runner.runAnalyze") }}</span>
+          <span class="runner-tooltip">
+            <span class="runner-tooltip-title">{{ t("runner.runAnalyze") }}</span>
+            <span class="runner-tooltip-shortcut">{{ shortcutAnalyze }}</span>
+          </span>
         </button>
         <button
           class="runner-icon-button"
           :class="{ active: runningMode === 'performance' }"
           :disabled="!canRun || runningMode !== null"
-          :title="`${t('runner.tipPerformance')} (${shortcutPerformance})`"
           :aria-label="t('runner.runPerformance')"
           @click="run('performance')"
         >
@@ -162,7 +165,10 @@ function handleKeydown(event: KeyboardEvent) {
               stroke-linejoin="round"
             />
           </svg>
-          <span class="runner-tooltip">{{ t("runner.runPerformance") }}</span>
+          <span class="runner-tooltip">
+            <span class="runner-tooltip-title">{{ t("runner.runPerformance") }}</span>
+            <span class="runner-tooltip-shortcut">{{ shortcutPerformance }}</span>
+          </span>
         </button>
       </div>
     </header>
@@ -190,15 +196,17 @@ function handleKeydown(event: KeyboardEvent) {
 .runner-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.5rem;
+  row-gap: 0.85rem;
   flex-wrap: wrap;
 }
 
 .runner-toolbar {
   display: inline-flex;
-  gap: 0.5rem;
+  gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .runner-icon-button {
@@ -230,7 +238,7 @@ function handleKeydown(event: KeyboardEvent) {
 
 .runner-icon-button:hover .runner-tooltip {
   opacity: 1;
-  transform: translate(-50%, -8px);
+  transform: translate(-50%, 0);
   pointer-events: auto;
 }
 
@@ -249,20 +257,33 @@ function handleKeydown(event: KeyboardEvent) {
 .runner-tooltip {
   position: absolute;
   left: 50%;
-  top: 0;
-  transform: translate(-50%, -2px);
+  top: calc(100% + 6px);
+  transform: translate(-50%, -4px);
   opacity: 0;
   pointer-events: none;
   background: var(--bg-base);
   color: var(--text-primary);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  padding: 0.45rem 0.75rem;
   font-size: 0.7rem;
   white-space: nowrap;
   box-shadow: var(--shadow-card);
   transition: opacity 0.2s ease, transform 0.2s ease;
   z-index: 5;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.runner-tooltip-title {
+  font-weight: 600;
+}
+
+.runner-tooltip-shortcut {
+  font-size: 0.65rem;
+  color: var(--text-muted);
 }
 
 .subtitle {
