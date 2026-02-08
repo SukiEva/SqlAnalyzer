@@ -69,7 +69,7 @@ async function submit() {
         <label class="field">
           <span>{{ t("import.fields.dialect") }}</span>
           <select v-model="dialect">
-            <option value="opengauss">openGauss</option>
+            <option value="opengauss">Open Gauss</option>
             <option value="dws">Huawei DWS</option>
             <option value="postgresql">PostgreSQL</option>
           </select>
