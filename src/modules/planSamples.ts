@@ -3,105 +3,64 @@ import { v4 as uuid } from "uuid";
 
 const baseId = uuid();
 
+const planSource = `Nested Loop Left Join  (cost=11.95..28.52 rows=5 width=157) (actual time=0.010..0.010 rows=0 loops=1)
+  Output: rel_users_exams.user_username, rel_users_exams.exam_id, rel_users_exams.started_at, rel_users_exams.finished_at, exam_1.id, exam_1.title, exam_1.date_from, exam_1.date_to, exam_1.created, exam_1.created_by_, exam_1.duration, exam_1.success_threshold, exam_1.published
+  Inner Unique: true
+  Join Filter: (exam_1.id = rel_users_exams.exam_id)
+  Buffers: shared hit=1
+  ->  Bitmap Heap Scan on public.rel_users_exams  (cost=11.80..20.27 rows=5 width=52) (actual time=0.009..0.009 rows=0 loops=1)
+        Output: rel_users_exams.user_username, rel_users_exams.exam_id, rel_users_exams.started_at, rel_users_exams.finished_at
+        Recheck Cond: (1 = rel_users_exams.exam_id)
+        Buffers: shared hit=1
+        ->  Bitmap Index Scan on rel_users_exams_pkey  (cost=0.00..11.80 rows=5 width=0) (actual time=0.005..0.005 rows=0 loops=1)
+              Index Cond: (1 = rel_users_exams.exam_id)
+              Buffers: shared hit=1
+  ->  Materialize  (cost=0.15..8.17 rows=1 width=105) (never executed)
+        Output: exam_1.id, exam_1.title, exam_1.date_from, exam_1.date_to, exam_1.created, exam_1.created_by_, exam_1.duration, exam_1.success_threshold, exam_1.published
+        ->  Index Scan using exam_pkey on public.exam exam_1  (cost=0.15..8.17 rows=1 width=105) (never executed)
+              Output: exam_1.id, exam_1.title, exam_1.date_from, exam_1.date_to, exam_1.created, exam_1.created_by_, exam_1.duration, exam_1.success_threshold, exam_1.published
+              Index Cond: (exam_1.id = 1)
+Planning Time: 1.110 ms
+Execution Time: 0.170 ms
+`;
+
+const planQuery = `/* A join between two tables */
+SELECT rel_users_exams.user_username AS rel_users_exams_user_username,
+         rel_users_exams.exam_id AS rel_users_exams_exam_id,
+         rel_users_exams.started_at AS rel_users_exams_started_at,
+         rel_users_exams.finished_at AS rel_users_exams_finished_at,
+         exam_1.id AS exam_1_id,
+         exam_1.title AS exam_1_title,
+         exam_1.date_from AS exam_1_date_from,
+         exam_1.date_to AS exam_1_date_to,
+         exam_1.created AS exam_1_created,
+         exam_1.created_by_ AS exam_1_created_by_,
+         exam_1.duration AS exam_1_duration,
+         exam_1.success_threshold AS exam_1_success_threshold,
+         exam_1.published AS exam_1_published
+FROM rel_users_exams LEFT OUTER
+JOIN exam AS exam_1
+    ON exam_1.id = rel_users_exams.exam_id
+WHERE 1 = rel_users_exams.exam_id;
+`;
+
 export const mockPlan: PlanExecution = {
   summary: {
     id: baseId,
     capturedAt: new Date().toISOString(),
     dialect: "opengauss",
     source: "upload",
-    sqlFingerprint: "select-orders-v1",
-    title: "Order aggregation demo",
-    tags: ["demo", "orders"],
-    sqlText: `SELECT c.region, COUNT(*) AS orders
-FROM orders o
-JOIN customers c ON o.customer_id = c.id
-WHERE o.status = 'completed'
-GROUP BY c.region;`,
+    sqlFingerprint: `pev2-sample-${baseId.slice(0, 8)}`,
+    title: "PEV2 Sample Plan",
+    tags: ["demo", "pev2"],
+    sqlText: planQuery,
   },
+  planSource,
+  planQuery,
+  nodes: [],
   stats: {
-    totalTimeMs: 1234,
-    totalMemoryMB: 205,
-    nodeCount: 6,
-  },
-  nodes: [
-    {
-      id: `${baseId}-root`,
-      name: "Aggregate",
-      level: 0,
-      metrics: {
-        actualRows: 120,
-        estimatedRows: 100,
-        actualTimeMs: 750,
-        estimatedTimeMs: 600,
-        memoryMB: 48,
-        dn: "CN",
-      },
-      description: "Finalize aggregation before returning rows",
-      properties: {
-        strategy: "Hashed",
-      },
-      docKey: "aggregate",
-      children: [
-        {
-          id: `${baseId}-hashjoin`,
-          name: "Hash Join",
-          level: 1,
-          metrics: {
-            actualRows: 5400,
-            estimatedRows: 2400,
-            actualTimeMs: 640,
-            estimatedTimeMs: 400,
-            memoryMB: 96,
-            dn: "DN1",
-          },
-          properties: {
-            joinType: "Inner",
-          },
-          warnings: ["Actual rows exceed estimate by 2.2x"],
-          docKey: "hash_join",
-          children: [
-            {
-              id: `${baseId}-scan1`,
-              name: "Seq Scan on orders",
-              level: 2,
-              metrics: {
-                actualRows: 10000,
-                estimatedRows: 10000,
-                actualTimeMs: 380,
-                estimatedTimeMs: 370,
-                memoryMB: 32,
-                dn: "DN1",
-              },
-              properties: {
-                filter: "status = 'completed'",
-              },
-              docKey: "seq_scan",
-              children: [],
-            },
-            {
-              id: `${baseId}-scan2`,
-              name: "Index Scan on customers_pkey",
-              level: 2,
-              metrics: {
-                actualRows: 120,
-                estimatedRows: 120,
-                actualTimeMs: 80,
-                estimatedTimeMs: 60,
-                memoryMB: 6,
-                dn: "DN2",
-              },
-              properties: {
-                index: "customers_pkey",
-              },
-              docKey: "index_scan",
-              children: [],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  annotations: {
-    [`${baseId}-root`]: ["Check aggregation pushdown possibilities"],
+    totalTimeMs: 0,
+    totalMemoryMB: 0,
+    nodeCount: 0,
   },
 };

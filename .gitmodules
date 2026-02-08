@@ -1,0 +1,3 @@
+[submodule "vendor/pev2"]
+	path = vendor/pev2
+	url = https://github.com/dalibo/pev2

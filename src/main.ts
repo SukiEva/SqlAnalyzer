@@ -4,6 +4,7 @@ import App from "./App.vue";
 import router from "./router";
 import i18n from "./services/i18n";
 import { applyThemePreference, loadThemePreference } from "./services/themeSettings";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/index.css";
 
 applyThemePreference(loadThemePreference());

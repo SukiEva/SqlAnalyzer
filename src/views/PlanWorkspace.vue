@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import PlanTree from "@/components/PlanTree.vue";
-import PlanGraph from "@/components/PlanGraph.vue";
+import Pev2Plan from "@/components/Pev2Plan.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
-import PlanNodeDetails from "@/components/PlanNodeDetails.vue";
 import PlanImportModal from "@/components/PlanImportModal.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted, ref } from "vue";
@@ -11,13 +9,10 @@ import { useI18n } from "vue-i18n";
 const planStore = usePlanStore();
 const { t } = useI18n();
 
-const nodes = computed(() => planStore.nodes);
-const focusedNode = computed(() => planStore.focusedNode);
 const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
   { id: "sql", label: t("plan.tabs.sql") },
   { id: "plan", label: t("plan.tabs.structure") },
-  { id: "canvas", label: t("plan.tabs.canvas") },
   { id: "insights", label: t("plan.tabs.insights") },
 ]);
 const activeTab = ref("sql");
@@ -44,20 +39,6 @@ onMounted(() => {
             <div class="plan-actions">
               <button class="ghost" @click="openImport = true">{{ t("app.importPlan") }}</button>
             </div>
-            <div class="plan-stats">
-              <div>
-                <span class="plan-stat-label">{{ t("plan.stats.nodes") }}</span>
-                <span class="plan-stat-value">{{ current.stats.nodeCount }}</span>
-              </div>
-              <div>
-                <span class="plan-stat-label">{{ t("plan.stats.runtime") }}</span>
-                <span class="plan-stat-value">{{ current.stats.totalTimeMs }} ms</span>
-              </div>
-              <div>
-                <span class="plan-stat-label">{{ t("plan.stats.memory") }}</span>
-                <span class="plan-stat-value">{{ current.stats.totalMemoryMB }} MB</span>
-              </div>
-            </div>
           </div>
         </template>
         <div v-else class="plan-empty">
@@ -82,22 +63,14 @@ onMounted(() => {
           <Transition name="tab-fade" mode="out-in">
             <section v-if="activeTab === 'sql'" key="sql" class="sql-pane">
               <div class="sql-block">
-                <pre v-if="current?.summary.sqlText" class="sql-code">{{ current?.summary.sqlText }}</pre>
+                <pre v-if="current?.summary.sqlText || current?.planQuery" class="sql-code">
+                  {{ current?.summary.sqlText || current?.planQuery }}
+                </pre>
                 <p v-else class="empty-state">{{ t("plan.sql.empty") }}</p>
               </div>
             </section>
             <section v-else-if="activeTab === 'plan'" key="plan" class="plan-pane">
-              <PlanTree :nodes="nodes" />
-            </section>
-            <section v-else-if="activeTab === 'canvas'" key="canvas" class="canvas-pane">
-              <div class="canvas-layout">
-                <div class="canvas-stage">
-                  <PlanGraph :nodes="nodes" />
-                </div>
-                <aside class="canvas-detail glass-panel">
-                  <PlanNodeDetails :node="focusedNode" />
-                </aside>
-              </div>
+              <Pev2Plan :execution="current" />
             </section>
             <section v-else key="insights" class="insights-pane">
               <PlanInsightPanel :execution="current" />
@@ -180,31 +153,6 @@ onMounted(() => {
   color: var(--text-muted);
 }
 
-.plan-stats {
-  display: flex;
-  gap: 1.5rem;
-  font-family: "JetBrains Mono", monospace;
-  text-align: right;
-}
-
-.plan-stats > div {
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 0.5rem 0.75rem;
-  min-width: 110px;
-}
-
-.plan-stat-label {
-  display: block;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.plan-stat-value {
-  font-size: 1.1rem;
-}
-
 .sql-block {
   background: var(--bg-soft);
   border: 1px solid var(--border);
@@ -271,54 +219,20 @@ onMounted(() => {
 
 .plan-pane,
 .sql-pane,
-.canvas-pane,
 .insights-pane {
   padding: 0;
 }
 
 .plan-pane,
-.canvas-pane,
 .insights-pane {
   display: flex;
   flex-direction: column;
   min-height: 420px;
 }
 
-.plan-pane :deep(.plan-tree) {
-  flex: 1;
-  min-height: 320px;
-}
-
-.canvas-pane {
-  min-height: 520px;
-}
-
-.canvas-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) 360px;
-  gap: 1.5rem;
-  align-items: stretch;
-}
-
-.canvas-stage {
-  min-height: 520px;
-}
-
-.canvas-detail {
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  height: 100%;
-  box-sizing: border-box;
-}
-
 @media (max-width: 1200px) {
   .workspace-body {
     min-height: auto;
-  }
-  .canvas-layout {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

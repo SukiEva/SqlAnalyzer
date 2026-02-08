@@ -42,12 +42,12 @@ export function parsePlanText(raw: string, options: ParseOptions = {}): PlanExec
   }
   const dialect = options.dialectHint ?? detectDialect(text);
   if (text.startsWith("{") || text.startsWith("[")) {
-    return buildExecutionFromJson(text, dialect, options);
+    return buildExecutionFromJson(text, dialect, options, text);
   }
   if (text.includes("A-time") && text.includes("E-rows")) {
-    return buildExecutionFromDwsTable(text, dialect, options);
+    return buildExecutionFromDwsTable(text, dialect, options, text);
   }
-  return buildExecutionFromIndented(text, dialect, options);
+  return buildExecutionFromIndented(text, dialect, options, text);
 }
 
 function detectDialect(text: string): PlanDialect {
@@ -55,7 +55,12 @@ function detectDialect(text: string): PlanDialect {
   return /dws/i.test(text) ? "dws" : "opengauss";
 }
 
-function buildExecutionFromJson(payload: string, dialect: PlanDialect, options: ParseOptions): PlanExecution {
+function buildExecutionFromJson(
+  payload: string,
+  dialect: PlanDialect,
+  options: ParseOptions,
+  planSource: string,
+): PlanExecution {
   let parsed: any;
   try {
     parsed = JSON.parse(payload);
@@ -69,7 +74,7 @@ function buildExecutionFromJson(payload: string, dialect: PlanDialect, options: 
     throw new Error("JSON plan missing Plan section");
   }
   const nodes = [convertJsonNode(rootNode, 0)];
-  return finalizeExecution(nodes, dialect, options);
+  return finalizeExecution(nodes, dialect, options, planSource);
 }
 
 function convertJsonNode(node: JsonPlanNode, level: number): PlanNode {
@@ -120,7 +125,12 @@ function convertJsonNode(node: JsonPlanNode, level: number): PlanNode {
   };
 }
 
-function buildExecutionFromIndented(text: string, dialect: PlanDialect, options: ParseOptions): PlanExecution {
+function buildExecutionFromIndented(
+  text: string,
+  dialect: PlanDialect,
+  options: ParseOptions,
+  planSource: string,
+): PlanExecution {
   const lines = text.split(/\r?\n/).filter((line) => line.trim().length);
   const roots: PlanNode[] = [];
   const stack: { level: number; node: PlanNode }[] = [];
@@ -158,7 +168,7 @@ function buildExecutionFromIndented(text: string, dialect: PlanDialect, options:
     stack.push({ level, node });
   });
 
-  return finalizeExecution(roots, dialect, options);
+  return finalizeExecution(roots, dialect, options, planSource);
 }
 
 function extractMetrics(text: string) {
@@ -193,14 +203,19 @@ function parseMemory(value: string | number | undefined): number | undefined {
   return amount;
 }
 
-function buildExecutionFromDwsTable(text: string, dialect: PlanDialect, options: ParseOptions): PlanExecution {
+function buildExecutionFromDwsTable(
+  text: string,
+  dialect: PlanDialect,
+  options: ParseOptions,
+  planSource: string,
+): PlanExecution {
   const lines = text
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter((line) => line && !/^[-+]+$/.test(line));
   const headerIndex = lines.findIndex((line) => /operation/i.test(line) && /A-time/i.test(line));
   if (headerIndex === -1) {
-    return buildExecutionFromIndented(text, dialect, options);
+    return buildExecutionFromIndented(text, dialect, options, planSource);
   }
   const headers = lines[headerIndex].split(/\s+\|\s+|\s{2,}/).map((h) => h.toLowerCase());
   const nodes: PlanNode[] = [];
@@ -232,7 +247,7 @@ function buildExecutionFromDwsTable(text: string, dialect: PlanDialect, options:
   }
 
   const tree = nestFlatNodes(nodes);
-  return finalizeExecution(tree, dialect, options);
+  return finalizeExecution(tree, dialect, options, planSource);
 }
 
 function nestFlatNodes(flat: PlanNode[]): PlanNode[] {
@@ -252,7 +267,12 @@ function nestFlatNodes(flat: PlanNode[]): PlanNode[] {
   return roots;
 }
 
-function finalizeExecution(nodes: PlanNode[], dialect: PlanDialect, options: ParseOptions): PlanExecution {
+function finalizeExecution(
+  nodes: PlanNode[],
+  dialect: PlanDialect,
+  options: ParseOptions,
+  planSource: string,
+): PlanExecution {
   const summaryId = uuid();
   let totalTime = 0;
   let totalMemory = 0;
@@ -277,6 +297,8 @@ function finalizeExecution(nodes: PlanNode[], dialect: PlanDialect, options: Par
       tags: [],
       sqlText: options.sqlText,
     },
+    planSource,
+    planQuery: options.sqlText,
     nodes,
     stats: {
       totalTimeMs: Math.round(totalTime),

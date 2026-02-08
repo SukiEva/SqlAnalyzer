@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import type { PlanDialect } from "@/modules/planModel";
-import { parsePlanText } from "@/modules/planParser";
+import { createPlanExecution } from "@/modules/planFactory";
 import { usePlanStore } from "@/stores/planStore";
 import { useI18n } from "vue-i18n";
 
@@ -40,7 +40,7 @@ async function submit() {
   }
   error.value = null;
   try {
-    const plan = parsePlanText(payload.value, {
+    const plan = createPlanExecution(payload.value, {
       dialectHint: dialect.value,
       title: title.value || t("import.defaultTitle"),
       source: "upload",

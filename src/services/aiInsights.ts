@@ -62,6 +62,12 @@ interface PlanDigest {
     fingerprint: string;
     truncated: boolean;
   };
+  plan: {
+    format: "json" | "text";
+    length: number;
+    preview: string | null;
+    truncated: boolean;
+  };
   stats: {
     nodeCount: number;
     totalTimeMs: number;
@@ -76,6 +82,7 @@ interface PlanDigest {
 }
 
 const MAX_SQL_CHARS = 1400;
+const MAX_PLAN_CHARS = 2400;
 const MAX_NODES = 14;
 
 function flattenNodes(nodes: PlanNode[], acc: Array<{ node: PlanNode; parentId: string | null }>, parentId: string | null) {
@@ -126,6 +133,23 @@ function compactSql(sqlText?: string) {
   };
 }
 
+function compactPlanSource(planSource: string) {
+  const compact = planSource.replace(/\s+/g, " ").trim();
+  if (!compact) {
+    return { length: 0, preview: null, truncated: false };
+  }
+  if (compact.length <= MAX_PLAN_CHARS) {
+    return { length: compact.length, preview: compact, truncated: false };
+  }
+  const head = compact.slice(0, Math.floor(MAX_PLAN_CHARS * 0.7));
+  const tail = compact.slice(-Math.floor(MAX_PLAN_CHARS * 0.2));
+  return {
+    length: compact.length,
+    preview: `${head} ... ${tail}`,
+    truncated: true,
+  };
+}
+
 function buildPlanDigest(exec: PlanExecution): PlanDigest {
   const flattened: Array<{ node: PlanNode; parentId: string | null }> = [];
   flattenNodes(exec.nodes, flattened, null);
@@ -161,7 +185,10 @@ function buildPlanDigest(exec: PlanExecution): PlanDigest {
     });
   });
 
-  const sqlInfo = compactSql(exec.summary.sqlText);
+  const sqlInfo = compactSql(exec.summary.sqlText ?? exec.planQuery);
+  const planInfo = compactPlanSource(exec.planSource);
+  const planFormat = exec.planSource.trim().startsWith("{") || exec.planSource.trim().startsWith("[") ? "json" : "text";
+  const nodeCount = exec.stats.nodeCount || exec.nodes.length;
 
   return {
     dialect: exec.summary.dialect,
@@ -171,8 +198,14 @@ function buildPlanDigest(exec: PlanExecution): PlanDigest {
       fingerprint: exec.summary.sqlFingerprint,
       truncated: sqlInfo.truncated,
     },
+    plan: {
+      format: planFormat,
+      length: planInfo.length,
+      preview: planInfo.preview,
+      truncated: planInfo.truncated,
+    },
     stats: {
-      nodeCount: exec.stats.nodeCount,
+      nodeCount,
       totalTimeMs: exec.stats.totalTimeMs,
       totalMemoryMB: exec.stats.totalMemoryMB,
       depth: computeDepth(exec.nodes, 0),
@@ -271,7 +304,7 @@ export async function analyzePlanWithAi(
 
   const systemMessage = [
     "You are a senior database performance analyst.",
-    "Given a compact JSON digest of SQL and execution plan, produce a concise, structured analysis.",
+    "Given a compact JSON digest of SQL and execution plan (including a raw plan preview), produce a concise, structured analysis.",
     "Prioritize accuracy, avoid speculation, and explicitly call out assumptions.",
     "Use the database-specific performance tuning documentation when dialect matches:",
     "dws -> https://support.huaweicloud.com/devg-dws/dws_04_0401.html",

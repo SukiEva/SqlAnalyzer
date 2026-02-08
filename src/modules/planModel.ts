@@ -35,6 +35,8 @@ export interface PlanSummary {
 
 export interface PlanExecution {
   summary: PlanSummary;
+  planSource: string;
+  planQuery?: string;
   nodes: PlanNode[];
   stats: {
     totalTimeMs: number;
