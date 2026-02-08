@@ -74,7 +74,8 @@ header {
 }
 
 .history-list {
-  margin-top: 1rem;
+  margin-top: 1.35rem;
+  padding-top: 0.25rem;
   flex: 1;
   display: flex;
   flex-direction: column;

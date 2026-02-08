@@ -79,8 +79,12 @@ export const usePlanStore = defineStore("plan", {
     loadFromHistory(planId: string) {
       const found = this.history.find((entry) => entry.summary.id === planId);
       if (found) {
-        this.currentExecution = found;
-        this.focusedNodeId = found.nodes[0]?.id ?? null;
+        this.currentExecution = {
+          ...found,
+          summary: { ...found.summary },
+          nodes: [...found.nodes],
+        };
+        this.focusedNodeId = this.currentExecution.nodes[0]?.id ?? null;
       }
     },
     async removePlan(planId: string) {

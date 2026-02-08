@@ -118,6 +118,25 @@ button {
   letter-spacing: 0.04em;
 }
 
+.plan-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.plan-heading-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.plan-heading-subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
 .nav-links {
   display: flex;
   gap: 1rem;
@@ -251,6 +270,13 @@ button.ghost:active {
 
 .scroll-y {
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-y::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 ::-webkit-scrollbar {

@@ -35,6 +35,7 @@ const { t } = useI18n();
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 1rem;
+  min-height: 56px;
 }
 
 .nav-left {

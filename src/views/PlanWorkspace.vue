@@ -41,8 +41,8 @@ onMounted(() => {
       <div class="workspace-main">
         <PageNav class="workspace-nav">
           <template #left>
-            <span class="brand-title">{{ t("app.title") }}</span>
-            <div v-if="current" class="plan-heading">
+            <span v-if="!current" class="brand-title">{{ t("app.title") }}</span>
+            <div v-else class="plan-heading">
               <p class="plan-heading-title">{{ current.summary.title }}</p>
               <p class="plan-heading-subtitle">
                 {{ current.summary.dialect.toUpperCase() }} ·
@@ -78,7 +78,7 @@ onMounted(() => {
               <PlanInsightPanel :execution="current" />
             </section>
             <section v-else key="plan" class="plan-pane">
-              <Pev2Plan :execution="current" :active-tab="pev2Tab" />
+              <Pev2Plan :execution="current" :active-tab="pev2Tab" :key="current ? current.summary.id : 'empty'" />
             </section>
           </Transition>
         </div>
@@ -111,24 +111,6 @@ onMounted(() => {
 .workspace-nav {
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
-}
-
-.plan-heading {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.plan-heading-title {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-
-.plan-heading-subtitle {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
 }
 
 .plan-title {
