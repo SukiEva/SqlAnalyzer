@@ -122,8 +122,8 @@ function buildBacktrack(trace: Map<number, number>[], a: string[], b: string[]):
 
 const diffRows = computed<DiffRow[]>(() => {
   if (!hasBase.value || !hasCandidate.value) return [];
-  const leftLines = basePlan.value.split(/\r?\n/);
-  const rightLines = candidate.value.split(/\r?\n/);
+  const leftLines = basePlan.value.split(/\r?\n/).filter((line) => line.trim().length > 0);
+  const rightLines = candidate.value.split(/\r?\n/).filter((line) => line.trim().length > 0);
   const diff = buildDiff(leftLines, rightLines);
   const rows: DiffRow[] = [];
   let leftNo = 1;
