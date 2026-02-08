@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Pev2Plan from "@/components/Pev2Plan.vue";
+import PageNav from "@/components/PageNav.vue";
 import PlanInsightPanel from "@/components/PlanInsightPanel.vue";
 import PlanImportModal from "@/components/PlanImportModal.vue";
 import { usePlanStore } from "@/stores/planStore";
@@ -38,6 +39,7 @@ onMounted(() => {
   <div class="workspace-grid">
     <section class="workspace-body">
       <div class="workspace-main glass-panel">
+        <PageNav class="workspace-nav" />
         <template v-if="current">
           <div class="plan-meta">
             <div class="plan-info">
@@ -104,6 +106,11 @@ onMounted(() => {
   flex-direction: column;
   padding: 1.75rem;
   gap: 1.5rem;
+}
+
+.workspace-nav {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .plan-meta {

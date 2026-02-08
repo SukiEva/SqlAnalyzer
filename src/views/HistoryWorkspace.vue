@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PlanHistoryPanel from "@/components/PlanHistoryPanel.vue";
+import PageNav from "@/components/PageNav.vue";
 import { usePlanStore } from "@/stores/planStore";
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
@@ -15,6 +16,9 @@ onMounted(() => {
 
 <template>
   <div class="history-page">
+    <section class="history-nav glass-panel">
+      <PageNav />
+    </section>
     <section class="history-hero glass-panel">
       <div>
         <p class="eyebrow">{{ t("history.hero.eyebrow") }}</p>
@@ -57,6 +61,10 @@ onMounted(() => {
   gap: 2rem;
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 139, 77, 0.08));
   border: 1px solid var(--border);
+}
+
+.history-nav {
+  padding: 1rem 1.25rem;
 }
 
 .eyebrow {
