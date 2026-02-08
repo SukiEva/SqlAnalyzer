@@ -16,27 +16,8 @@ onMounted(() => {
 
 <template>
   <div class="history-page">
-    <section class="history-nav glass-panel">
-      <PageNav />
-    </section>
-    <section class="history-hero glass-panel">
-      <div>
-        <p class="eyebrow">{{ t("history.hero.eyebrow") }}</p>
-        <h1>{{ t("history.hero.title") }}</h1>
-        <p class="subtitle">{{ t("history.hero.subtitle") }}</p>
-      </div>
-      <div class="stats">
-        <div>
-          <span>{{ t("history.hero.total") }}</span>
-          <strong>{{ history.length }}</strong>
-        </div>
-        <div>
-          <span>{{ t("history.hero.latest") }}</span>
-          <strong>{{ history[0]?.title ?? t("history.hero.none") }}</strong>
-        </div>
-      </div>
-    </section>
     <section class="history-panel glass-panel">
+      <PageNav class="history-nav" />
       <PlanHistoryPanel
         :history="history"
         @select="planStore.loadFromHistory"
@@ -50,56 +31,16 @@ onMounted(() => {
 .history-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-}
-
-.history-hero {
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(255, 139, 77, 0.08));
-  border: 1px solid var(--border);
-}
-
-.history-nav {
-  padding: 1rem 1.25rem;
-}
-
-.eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.75rem;
-  margin: 0;
-  color: var(--text-muted);
-}
-
-h1 {
-  margin: 0.5rem 0;
-}
-
-.subtitle {
-  margin: 0;
-  color: var(--text-secondary);
-}
-
-.stats {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.stats span {
-  display: block;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-.stats strong {
-  font-size: 1.2rem;
+  gap: 0;
 }
 
 .history-panel {
   padding: 1.25rem;
+}
+
+.history-nav {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
 }
 </style>

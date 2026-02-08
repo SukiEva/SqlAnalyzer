@@ -7,12 +7,17 @@ const { t } = useI18n();
 
 <template>
   <div class="page-nav">
-    <div class="brand-title">{{ t("app.title") }}</div>
+    <div class="nav-left">
+      <slot name="left">
+        <div class="brand-title">{{ t("app.title") }}</div>
+      </slot>
+    </div>
     <nav class="nav-links">
       <RouterLink class="nav-link" to="/">{{ t("app.workspace") }}</RouterLink>
       <RouterLink class="nav-link" to="/history">{{ t("app.history") }}</RouterLink>
     </nav>
     <div class="nav-actions">
+      <slot name="actions"></slot>
       <RouterLink class="icon-link" to="/settings" :title="t('app.settings')" aria-label="Settings">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path
@@ -32,8 +37,10 @@ const { t } = useI18n();
   gap: 1rem;
 }
 
-.brand-title {
-  font-size: 1rem;
+.nav-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .nav-links {
@@ -42,5 +49,8 @@ const { t } = useI18n();
 
 .nav-actions {
   justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 </style>
