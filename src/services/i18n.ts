@@ -25,7 +25,7 @@ const messages = {
     plan: {
       emptyState: "Import a plan to begin.",
       tabs: {
-        sql: "SQL Context",
+        sql: "Context",
         structure: "PEV2 Plan",
         canvas: "Visualization",
         insights: "Insights",
@@ -180,7 +180,7 @@ const messages = {
     plan: {
       emptyState: "导入执行计划以开始分析",
       tabs: {
-        sql: "SQL 上下文",
+        sql: "上下文",
         structure: "PEV2 视图",
         canvas: "可视化",
         insights: "洞察",
