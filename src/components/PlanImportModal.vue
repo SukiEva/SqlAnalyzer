@@ -99,17 +99,20 @@ async function submit() {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 2rem;
   z-index: 1000;
   backdrop-filter: blur(8px);
 }
 
 .modal {
-  width: min(720px, 90vw);
+  width: min(680px, 90vw);
+  max-height: 80vh;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   box-shadow: var(--shadow);
+  overflow: auto;
 }
 
 header {
