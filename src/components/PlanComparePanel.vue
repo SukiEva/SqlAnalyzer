@@ -46,75 +46,44 @@ function buildDiff(oldLines: string[], newLines: string[]): DiffEntry[] {
   const b = newLines;
   const n = a.length;
   const m = b.length;
-  const max = n + m;
-  const trace: Map<number, number>[] = [];
-  let v = new Map<number, number>();
-  v.set(1, 0);
+  const dp: number[][] = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
 
-  for (let d = 0; d <= max; d += 1) {
-    const snapshot = new Map<number, number>();
-    for (let k = -d; k <= d; k += 2) {
-      let x: number;
-      const down = v.get(k + 1) ?? 0;
-      const right = v.get(k - 1) ?? 0;
-      if (k === -d || (k !== d && right < down)) {
-        x = down;
+  for (let i = 1; i <= n; i += 1) {
+    for (let j = 1; j <= m; j += 1) {
+      if (a[i - 1] === b[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1] + 1;
       } else {
-        x = right + 1;
-      }
-      let y = x - k;
-      while (x < n && y < m && a[x] === b[y]) {
-        x += 1;
-        y += 1;
-      }
-      snapshot.set(k, x);
-      if (x >= n && y >= m) {
-        trace.push(snapshot);
-        return buildBacktrack(trace, a, b);
+        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
       }
     }
-    trace.push(snapshot);
-    v = snapshot;
   }
-  return [];
-}
 
-function buildBacktrack(trace: Map<number, number>[], a: string[], b: string[]): DiffEntry[] {
   const result: DiffEntry[] = [];
-  let x = a.length;
-  let y = b.length;
+  let i = n;
+  let j = m;
 
-  for (let d = trace.length - 1; d >= 0; d -= 1) {
-    const v = trace[d];
-    const k = x - y;
-    let prevK: number;
-    const down = v.get(k + 1) ?? -1;
-    const right = v.get(k - 1) ?? -1;
-    if (k === -d || (k !== d && right < down)) {
-      prevK = k + 1;
+  while (i > 0 && j > 0) {
+    if (a[i - 1] === b[j - 1]) {
+      result.push({ type: "equal", left: a[i - 1], right: b[j - 1] });
+      i -= 1;
+      j -= 1;
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      result.push({ type: "remove", left: a[i - 1] });
+      i -= 1;
     } else {
-      prevK = k - 1;
+      result.push({ type: "add", right: b[j - 1] });
+      j -= 1;
     }
-    const prevX = v.get(prevK) ?? 0;
-    const prevY = prevX - prevK;
+  }
 
-    while (x > prevX && y > prevY) {
-      result.push({ type: "equal", left: a[x - 1], right: b[y - 1] });
-      x -= 1;
-      y -= 1;
-    }
+  while (i > 0) {
+    result.push({ type: "remove", left: a[i - 1] });
+    i -= 1;
+  }
 
-    if (d === 0) {
-      break;
-    }
-
-    if (x === prevX) {
-      result.push({ type: "add", right: b[y - 1] });
-      y -= 1;
-    } else {
-      result.push({ type: "remove", left: a[x - 1] });
-      x -= 1;
-    }
+  while (j > 0) {
+    result.push({ type: "add", right: b[j - 1] });
+    j -= 1;
   }
 
   return result.reverse();
@@ -122,8 +91,8 @@ function buildBacktrack(trace: Map<number, number>[], a: string[], b: string[]):
 
 const diffRows = computed<DiffRow[]>(() => {
   if (!hasBase.value || !hasCandidate.value) return [];
-  const leftLines = basePlan.value.split(/\r?\n/).filter((line) => line.trim().length > 0);
-  const rightLines = candidate.value.split(/\r?\n/).filter((line) => line.trim().length > 0);
+  const leftLines = basePlan.value.split(/\r?\n/);
+  const rightLines = candidate.value.split(/\r?\n/);
   const diff = buildDiff(leftLines, rightLines);
   const rows: DiffRow[] = [];
   let leftNo = 1;
