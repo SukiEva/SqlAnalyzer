@@ -18,7 +18,13 @@ const targetTab = computed(() => props.activeTab ?? "plan");
 
 <template>
   <div v-if="execution && hasPlan" class="pev2-wrapper">
-    <Pev2Plan :plan-source="planSource" :plan-query="planQuery" :active-tab="targetTab" :disable-hash="true" />
+    <Pev2Plan
+      :plan-source="planSource"
+      :plan-query="planQuery"
+      :active-tab="targetTab"
+      :disable-hash="true"
+      :hide-tabs="true"
+    />
   </div>
   <div v-else class="pev2-empty">
     <p>{{ t("plan.emptyState") }}</p>
@@ -35,9 +41,6 @@ const targetTab = computed(() => props.activeTab ?? "plan");
   overflow: hidden;
 }
 
-.pev2-wrapper :deep(.plan-container > .d-flex.align-items-center) {
-  display: none;
-}
 
 .pev2-empty {
   display: flex;
