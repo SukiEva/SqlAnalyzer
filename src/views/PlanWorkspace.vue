@@ -38,18 +38,16 @@ onMounted(() => {
 <template>
   <div class="workspace-grid">
     <section class="workspace-body">
-      <div class="workspace-main glass-panel">
+      <div class="workspace-main">
         <PageNav class="workspace-nav">
           <template #left>
-            <div class="workspace-title">
-              <span class="brand-title">{{ t("app.title") }}</span>
-              <div v-if="current" class="plan-heading">
-                <p class="plan-heading-title">{{ current.summary.title }}</p>
-                <p class="plan-heading-subtitle">
-                  {{ current.summary.dialect.toUpperCase() }} ·
-                  {{ new Date(current.summary.capturedAt).toLocaleString() }}
-                </p>
-              </div>
+            <span class="brand-title">{{ t("app.title") }}</span>
+            <div v-if="current" class="plan-heading">
+              <p class="plan-heading-title">{{ current.summary.title }}</p>
+              <p class="plan-heading-subtitle">
+                {{ current.summary.dialect.toUpperCase() }} ·
+                {{ new Date(current.summary.capturedAt).toLocaleString() }}
+              </p>
             </div>
           </template>
           <template #actions>
@@ -113,12 +111,6 @@ onMounted(() => {
 .workspace-nav {
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
-}
-
-.workspace-title {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
 }
 
 .plan-heading {

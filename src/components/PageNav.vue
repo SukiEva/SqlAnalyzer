@@ -39,8 +39,9 @@ const { t } = useI18n();
 
 .nav-left {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .nav-links {

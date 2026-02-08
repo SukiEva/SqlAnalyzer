@@ -16,7 +16,7 @@ onMounted(() => {
 
 <template>
   <div class="history-page">
-    <section class="history-panel glass-panel">
+    <section class="history-panel">
       <PageNav class="history-nav" />
       <PlanHistoryPanel
         :history="history"
