@@ -298,12 +298,13 @@ watch(
 }
 
 .analysis-grid {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .analysis-card {
+  width: 100%;
   padding: 1rem;
   border-radius: 16px;
   background: var(--bg-panel);
