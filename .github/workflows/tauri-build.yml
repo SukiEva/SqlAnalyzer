@@ -118,7 +118,22 @@ jobs:
           name: ${{ matrix.artifact }}
           path: src-tauri/target/release/bundle
 
-      - name: Upload to release
+  publish-release:
+    needs:
+      - check-version
+      - create-release
+      - build
+    if: needs.check-version.outputs.should_build == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download bundle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-bundle"
+          path: release-bundles
+          merge-multiple: true
+
+      - name: Upload bundles to release
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -127,7 +142,19 @@ jobs:
           files=()
           while IFS= read -r -d '' file; do
             files+=("$file")
-          done < <(find src-tauri/target/release/bundle -type f -print0)
+          done < <(
+            find release-bundles -type f \( \
+              -name "*.dmg" -o \
+              -name "*.app.tar.gz" -o \
+              -name "*.msi" -o \
+              -name "*.exe" -o \
+              -name "*.zip" -o \
+              -name "*.tar.gz" -o \
+              -name "*.AppImage" -o \
+              -name "*.deb" -o \
+              -name "*.rpm" \
+            \) -print0
+          )
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No bundle files found." >&2
             exit 1
