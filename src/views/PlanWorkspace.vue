@@ -11,11 +11,22 @@ const { t } = useI18n();
 
 const current = computed(() => planStore.currentExecution);
 const tabs = computed(() => [
-  { id: "sql", label: t("plan.tabs.sql") },
-  { id: "plan", label: t("plan.tabs.structure") },
+  { id: "context", label: t("plan.tabs.sql") },
+  { id: "visual", label: t("plan.tabs.structure") },
+  { id: "execution", label: t("plan.tabs.canvas") },
   { id: "insights", label: t("plan.tabs.insights") },
 ]);
-const activeTab = ref("sql");
+const activeTab = ref("visual");
+const pev2Tab = computed(() => {
+  switch (activeTab.value) {
+    case "context":
+      return "raw";
+    case "execution":
+      return "grid";
+    default:
+      return "plan";
+  }
+});
 const openImport = ref(false);
 
 onMounted(() => {
@@ -61,19 +72,11 @@ onMounted(() => {
         </div>
         <div class="tab-panels">
           <Transition name="tab-fade" mode="out-in">
-            <section v-if="activeTab === 'sql'" key="sql" class="sql-pane">
-              <div class="sql-block">
-                <pre v-if="current?.summary.sqlText || current?.planQuery" class="sql-code">
-                  {{ current?.summary.sqlText || current?.planQuery }}
-                </pre>
-                <p v-else class="empty-state">{{ t("plan.sql.empty") }}</p>
-              </div>
-            </section>
-            <section v-else-if="activeTab === 'plan'" key="plan" class="plan-pane">
-              <Pev2Plan :execution="current" />
-            </section>
-            <section v-else key="insights" class="insights-pane">
+            <section v-if="activeTab === 'insights'" key="insights" class="insights-pane">
               <PlanInsightPanel :execution="current" />
+            </section>
+            <section v-else key="plan" class="plan-pane">
+              <Pev2Plan :execution="current" :active-tab="pev2Tab" />
             </section>
           </Transition>
         </div>
@@ -153,27 +156,6 @@ onMounted(() => {
   color: var(--text-muted);
 }
 
-.sql-block {
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 1rem 1.1rem;
-}
-
-.sql-code {
-  margin: 0;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-}
-
-.empty-state {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
 .tab-strip {
   display: inline-flex;
   gap: 0.35rem;
@@ -218,7 +200,6 @@ onMounted(() => {
 }
 
 .plan-pane,
-.sql-pane,
 .insights-pane {
   padding: 0;
 }
