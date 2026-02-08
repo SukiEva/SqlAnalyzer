@@ -85,11 +85,69 @@ async function run(mode: RunMode) {
 <template>
   <div class="runner-panel">
     <header class="runner-header">
-      <div>
+      <div class="runner-heading">
         <h3>{{ t("runner.title") }}</h3>
         <p class="subtitle">{{ t("runner.subtitle") }}</p>
       </div>
-      <span class="runner-tag">Runner</span>
+      <div class="runner-toolbar">
+        <button
+          class="runner-icon-button"
+          :class="{ active: runningMode === 'plain' }"
+          :disabled="!canRun || runningMode !== null"
+          :title="t('runner.tipPlain')"
+          :aria-label="t('runner.runPlain')"
+          @click="run('plain')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 5.5h10.5a3.5 3.5 0 0 1 0 7H4m0 0 3-3m-3 3 3 3M14 19h6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <button
+          class="runner-icon-button"
+          :class="{ active: runningMode === 'analyze' }"
+          :disabled="!canRun || runningMode !== null"
+          :title="t('runner.tipAnalyze')"
+          :aria-label="t('runner.runAnalyze')"
+          @click="run('analyze')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 19V5m0 14h14m0 0-3-3m3 3-3 3M9 15l3-4 3 2 4-6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <button
+          class="runner-icon-button"
+          :class="{ active: runningMode === 'performance' }"
+          :disabled="!canRun || runningMode !== null"
+          :title="t('runner.tipPerformance')"
+          :aria-label="t('runner.runPerformance')"
+          @click="run('performance')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 4v4m0 0a4 4 0 1 1-3.46 6m3.46-6 4-4m-8.5 15H20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
     </header>
 
     <div v-if="!isDbConfigured(dbSettings)" class="runner-empty">
@@ -100,36 +158,6 @@ async function run(mode: RunMode) {
       <span>{{ t("runner.sqlLabel") }}</span>
       <textarea v-model="sql" rows="6" :placeholder="t('runner.sqlPlaceholder')"></textarea>
     </label>
-
-    <div class="runner-actions">
-      <button
-        class="runner-action"
-        :disabled="!canRun"
-        :title="t('runner.tipPlain')"
-        @click="run('plain')"
-      >
-        <span class="action-title">{{ t("runner.runPlain") }}</span>
-        <span class="action-desc">{{ t("runner.tipPlain") }}</span>
-      </button>
-      <button
-        class="runner-action"
-        :disabled="!canRun"
-        :title="t('runner.tipAnalyze')"
-        @click="run('analyze')"
-      >
-        <span class="action-title">{{ t("runner.runAnalyze") }}</span>
-        <span class="action-desc">{{ t("runner.tipAnalyze") }}</span>
-      </button>
-      <button
-        class="runner-action"
-        :disabled="!canRun"
-        :title="t('runner.tipPerformance')"
-        @click="run('performance')"
-      >
-        <span class="action-title">{{ t("runner.runPerformance") }}</span>
-        <span class="action-desc">{{ t("runner.tipPerformance") }}</span>
-      </button>
-    </div>
 
     <p v-if="error" class="runner-error">{{ error }}</p>
   </div>
@@ -145,20 +173,53 @@ async function run(mode: RunMode) {
 .runner-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
-.runner-tag {
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  background: var(--bg-base);
+.runner-toolbar {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.runner-icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  background: var(--bg-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-secondary);
-  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.runner-icon-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.runner-icon-button:hover:not(:disabled) {
+  border-color: var(--accent-1);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-1px);
+}
+
+.runner-icon-button.active {
+  border-color: var(--accent-1);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card);
+}
+
+.runner-icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
 }
 
 .subtitle {
@@ -182,47 +243,6 @@ async function run(mode: RunMode) {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.85rem;
   box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
-}
-
-.runner-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.75rem;
-}
-
-.runner-action {
-  border: 1px solid var(--border);
-  background: var(--bg-base);
-  border-radius: 14px;
-  padding: 0.75rem 0.9rem;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.runner-action:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-  box-shadow: none;
-}
-
-.runner-action:hover:not(:disabled) {
-  border-color: var(--accent-1);
-  box-shadow: var(--shadow-card);
-  transform: translateY(-1px);
-}
-
-.action-title {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.action-desc {
-  font-size: 0.75rem;
-  color: var(--text-muted);
 }
 
 .runner-empty {
