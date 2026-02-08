@@ -96,17 +96,17 @@ async function submit() {
   position: fixed;
   inset: 0;
   background: rgba(31, 42, 68, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
   z-index: 1000;
   backdrop-filter: blur(8px);
 }
 
 .modal {
-  width: min(680px, 90vw);
-  max-height: 80vh;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(680px, calc(100vw - 4rem));
+  max-height: calc(100vh - 4rem);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
