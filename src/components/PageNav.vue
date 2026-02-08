@@ -15,6 +15,7 @@ const { t } = useI18n();
     <nav class="nav-links">
       <RouterLink class="nav-link" to="/">{{ t("app.workspace") }}</RouterLink>
       <RouterLink class="nav-link" to="/history">{{ t("app.history") }}</RouterLink>
+      <RouterLink class="nav-link" to="/runner">{{ t("app.runner") }}</RouterLink>
     </nav>
     <div class="nav-actions">
       <slot name="actions"></slot>

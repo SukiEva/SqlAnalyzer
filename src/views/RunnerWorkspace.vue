@@ -1,23 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import PlanHistoryPanel from "@/components/PlanHistoryPanel.vue";
-import PlanImportModal from "@/components/PlanImportModal.vue";
-import PageNav from "@/components/PageNav.vue";
-import { usePlanStore } from "@/stores/planStore";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import PageNav from "@/components/PageNav.vue";
+import PlanImportModal from "@/components/PlanImportModal.vue";
+import PlanRunnerPanel from "@/components/PlanRunnerPanel.vue";
+import { usePlanStore } from "@/stores/planStore";
 
 const planStore = usePlanStore();
-const history = computed(() => planStore.historySummaries);
-const current = computed(() => planStore.currentExecution);
 const { t } = useI18n();
-const router = useRouter();
+const current = computed(() => planStore.currentExecution);
 const openImport = ref(false);
-
-function handleSelect(planId: string) {
-  planStore.loadFromHistory(planId);
-  router.push("/");
-}
 
 onMounted(() => {
   planStore.bootstrap();
@@ -25,9 +17,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="history-page">
-    <section class="history-panel">
-      <PageNav class="history-nav">
+  <div class="runner-page">
+    <section class="runner-panel">
+      <PageNav class="runner-nav">
         <template #left>
           <span v-if="!current" class="brand-title">{{ t("app.title") }}</span>
           <div v-else class="plan-heading">
@@ -42,31 +34,37 @@ onMounted(() => {
           <button class="ghost" @click="openImport = true">{{ t("app.importPlan") }}</button>
         </template>
       </PageNav>
-      <PlanHistoryPanel
-        :history="history"
-        @select="handleSelect"
-        @delete="planStore.removePlan"
-      />
+      <div class="runner-content">
+        <PlanRunnerPanel />
+      </div>
     </section>
     <PlanImportModal :open="openImport" @close="openImport = false" />
   </div>
 </template>
 
 <style scoped>
-.history-page {
+.runner-page {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.history-panel {
+.runner-panel {
   padding: 1.75rem;
 }
 
-.history-nav {
+.runner-nav {
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
   margin-bottom: 1.5rem;
 }
 
+.runner-content {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.runner-content :deep(.runner-panel) {
+  width: min(720px, 100%);
+}
 </style>

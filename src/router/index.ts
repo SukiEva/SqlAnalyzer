@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import PlanWorkspace from "@/views/PlanWorkspace.vue";
 import SettingsHub from "@/views/SettingsHub.vue";
 import HistoryWorkspace from "@/views/HistoryWorkspace.vue";
+import RunnerWorkspace from "@/views/RunnerWorkspace.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -18,6 +19,11 @@ const routes: RouteRecordRaw[] = [
     path: "/settings",
     name: "settings",
     component: SettingsHub,
+  },
+  {
+    path: "/runner",
+    name: "runner",
+    component: RunnerWorkspace,
   },
 ];
 
